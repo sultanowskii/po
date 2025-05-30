@@ -1,0 +1,9 @@
+poc
+*.elf
+*.o
+*.out
+
+*.gv
+*.png
+
+.vscode/

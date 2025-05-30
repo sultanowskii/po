@@ -1,0 +1,36 @@
+#pragma once
+
+struct AstNode;
+
+enum AstNodeType {
+    STATEMENT,
+    EXPRESSION,
+};
+
+enum StatementType {
+    STATEMENT_NEW_VARIABLE,
+    STATEMENT_ASSIGN,
+    STATEMENT_IF,
+    STATEMENT_WHILE,
+    STATEMENT_BLOCK,
+};
+
+enum ExpressionType {
+    EXPRESSION_BINARY,
+    EXPRESSION_LITERAL,
+    EXPRESSION_IDENTIFIER,
+};
+
+enum ExpressionBinaryType {
+    EXPRESSION_BINARY_EQUALS,
+    EXPRESSION_BINARY_NOT_EQUALS,
+    EXPRESSION_BINARY_PLUS,
+    EXPRESSION_BINARY_MINUS,
+    EXPRESSION_BINARY_MUL,
+    EXPRESSION_BINARY_DIV,
+};
+
+enum ExpressionLiteralType {
+    EXPRESSION_LITERAL_FLOAT,
+    EXPRESSION_LITERAL_INT,
+};
