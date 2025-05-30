@@ -78,7 +78,7 @@ extern FILE *yyin;
 
 void yyerror(const char *s);
 
-#line 82 "src/grammar/po.tab.c"
+#line 82 "src/gen/po.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -1131,11 +1131,11 @@ yyreduce:
   case 3: /* statement_list: %empty  */
 #line 46 "src/grammar/po.y"
       { puts("EMPTY STATEMENT LIST"); }
-#line 1135 "src/grammar/po.tab.c"
+#line 1135 "src/gen/po.tab.c"
     break;
 
 
-#line 1139 "src/grammar/po.tab.c"
+#line 1139 "src/gen/po.tab.c"
 
       default: break;
     }

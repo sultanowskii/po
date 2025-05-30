@@ -1,5 +1,5 @@
 %{
-#include "grammar/po.tab.h"
+#include "gen/po.tab.h"
 
 extern int yylval;
 %}

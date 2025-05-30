@@ -1,6 +1,6 @@
-#line 1 "src/grammar/po.yy.c"
+#line 1 "src/gen/po.yy.c"
 
-#line 3 "src/grammar/po.yy.c"
+#line 3 "src/gen/po.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -469,11 +469,11 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "src/grammar/po.l"
 #line 2 "src/grammar/po.l"
-#include "grammar/po.tab.h"
+#include "gen/po.tab.h"
 
 extern int yylval;
-#line 475 "src/grammar/po.yy.c"
-#line 476 "src/grammar/po.yy.c"
+#line 475 "src/gen/po.yy.c"
+#line 476 "src/gen/po.yy.c"
 
 #define INITIAL 0
 
@@ -692,7 +692,7 @@ YY_DECL
 	{
 #line 7 "src/grammar/po.l"
 
-#line 695 "src/grammar/po.yy.c"
+#line 695 "src/gen/po.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -855,7 +855,7 @@ YY_RULE_SETUP
 #line 35 "src/grammar/po.l"
 ECHO;
 	YY_BREAK
-#line 858 "src/grammar/po.yy.c"
+#line 858 "src/gen/po.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
