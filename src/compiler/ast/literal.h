@@ -11,4 +11,4 @@ typedef enum LiteralType LiteralType;
 
 Literal *literal_create_float(double value);
 Literal *literal_create_int(signed long long value);
-void literal_destroy(Literal *literal);
+void     literal_destroy(Literal *literal);

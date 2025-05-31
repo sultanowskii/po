@@ -9,9 +9,9 @@ struct Identifier {
 };
 typedef struct Identifier Identifier;
 
-Identifier* identifier_create(const char *name) {
+Identifier *identifier_create(const char *name) {
     Identifier *ident = malloc(sizeof(Identifier));
-    *ident = (Identifier) {
+    *ident = (Identifier){
         .name = strdup(name),
     };
     return ident;

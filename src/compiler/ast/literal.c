@@ -5,16 +5,15 @@
 struct Literal {
     LiteralType type;
     union {
-        double float_;
+        double           float_;
         signed long long int_;
     };
 };
 typedef struct Literal Literal;
 
-
 Literal *literal_create_float(double value) {
     Literal *lit = malloc(sizeof(Literal));
-    *lit = (Literal) {
+    *lit = (Literal){
         .type = LITERAL_FLOAT,
         .float_ = value,
     };
@@ -23,7 +22,7 @@ Literal *literal_create_float(double value) {
 
 Literal *literal_create_int(signed long long value) {
     Literal *lit = malloc(sizeof(Literal));
-    *lit = (Literal) {
+    *lit = (Literal){
         .type = LITERAL_INT,
         .int_ = value,
     };

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "compiler/ast/expression.h"
+// Forward declarations
+typedef struct Expression Expression;
 
 struct BinaryOp;
 typedef struct BinaryOp BinaryOp;
@@ -15,5 +16,5 @@ enum BinaryOpType {
 };
 typedef enum BinaryOpType BinaryOpType;
 
-BinaryOp *binary_op_create(enum ExpressionBinaryOpType op_type, Expression *left_expression, Expression *right_expression);
-void binary_op_destroy(BinaryOp *binary_op);
+BinaryOp *binary_op_create(BinaryOpType op_type, Expression *left, Expression *right);
+void      binary_op_destroy(BinaryOp *bin_op);

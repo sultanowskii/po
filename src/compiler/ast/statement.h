@@ -1,7 +1,7 @@
 #pragma once
 
-#include "compiler/ast/identifier.h"
 #include "compiler/ast/expression.h"
+#include "compiler/ast/identifier.h"
 #include "compiler/ast/statement_list.h"
 
 struct Statement;
@@ -20,4 +20,4 @@ Statement *statement_create_assign(Identifier *identifier, Expression *expressio
 Statement *statement_create_if(Expression *cond_expression, StatementList *if_block);
 Statement *statement_create_if_else(Expression *cond_expression, StatementList *if_block, StatementList *else_block);
 Statement *statement_create_while(Expression *cond_expression, StatementList *block);
-void statement_destroy(Statement *statement);
+void       statement_destroy(Statement *statement);

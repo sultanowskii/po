@@ -1,8 +1,9 @@
 #pragma once
 
-#include "compiler/ast/literal.h"
-#include "compiler/ast/identifier.h"
-#include "compiler/ast/binary_op.h"
+// Forward declarations
+typedef struct BinaryOp   BinaryOp;
+typedef struct Literal    Literal;
+typedef struct Identifier Identifier;
 
 struct Expression;
 typedef struct Expression Expression;
@@ -17,4 +18,4 @@ typedef enum ExpressionType ExpressionType;
 Expression *expression_create_literal(Literal *literal);
 Expression *expression_create_identifier(Identifier *identifier);
 Expression *expression_create_binary_op(BinaryOp *binary_op);
-void expression_destroy(Expression *expression);
+void        expression_destroy(Expression *expression);
