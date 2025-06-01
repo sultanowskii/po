@@ -70,6 +70,7 @@
 #line 2 "src/grammar/po.y"
 
     #include <stdio.h>
+    #include <inttypes.h>
 
     #include "compiler/ast/ast.h"
     // Stuff from Flex that Bison needs to know about:
@@ -81,7 +82,7 @@
     int yydebug = 1;
     #define YYDEBUG 1
 
-#line 85 "src/gen/po.tab.c"
+#line 86 "src/gen/po.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -538,11 +539,11 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    81,    81,    85,    86,    87,    91,    92,    96,    97,
-      98,    99,   103,   104,   108,   109,   110,   111,   112,   116,
-     120,   124,   125,   129,   133,   134,   135,   139,   140,   141,
-     145,   146,   147,   151,   152,   153,   157,   158,   159,   160,
-     164
+       0,    82,    82,    86,    87,    88,    92,    93,    97,    98,
+      99,   100,   104,   105,   109,   110,   111,   112,   113,   117,
+     121,   125,   126,   130,   134,   135,   136,   140,   141,   142,
+     146,   147,   148,   152,   153,   154,   158,   159,   160,   161,
+     165
 };
 #endif
 
@@ -1418,145 +1419,145 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* prog: delimiter_optional statement_list $end  */
-#line 81 "src/grammar/po.y"
+#line 82 "src/grammar/po.y"
                                               { *program = program_create((yyvsp[-1].stmt_list)); }
-#line 1424 "src/gen/po.tab.c"
+#line 1425 "src/gen/po.tab.c"
     break;
 
   case 3: /* statement_list: %empty  */
-#line 85 "src/grammar/po.y"
+#line 86 "src/grammar/po.y"
                                          { (yyval.stmt_list) = statement_list_create(); }
-#line 1430 "src/gen/po.tab.c"
+#line 1431 "src/gen/po.tab.c"
     break;
 
   case 6: /* non_empty_statement_list: statement  */
-#line 91 "src/grammar/po.y"
+#line 92 "src/grammar/po.y"
                                                    { (yyval.stmt_list) = statement_list_create(); statement_list_add_statement((yyval.stmt_list), (yyvsp[0].stmt)); }
-#line 1436 "src/gen/po.tab.c"
+#line 1437 "src/gen/po.tab.c"
     break;
 
   case 7: /* non_empty_statement_list: non_empty_statement_list delimiter statement  */
-#line 92 "src/grammar/po.y"
+#line 93 "src/grammar/po.y"
                                                    { statement_list_add_statement((yyvsp[-2].stmt_list), (yyvsp[0].stmt)); }
-#line 1442 "src/gen/po.tab.c"
+#line 1443 "src/gen/po.tab.c"
     break;
 
   case 18: /* statement: block  */
-#line 112 "src/grammar/po.y"
+#line 113 "src/grammar/po.y"
                              { (yyval.stmt) = statement_create_block((yyvsp[0].block)); }
-#line 1448 "src/gen/po.tab.c"
+#line 1449 "src/gen/po.tab.c"
     break;
 
   case 19: /* statement_new_variable: IDENTIFIER OP_WALRUS expression  */
-#line 116 "src/grammar/po.y"
+#line 117 "src/grammar/po.y"
                                       { (yyval.stmt) = statement_create_new_variable(identifier_create((yyvsp[-2].str_)), (yyvsp[0].expr)); }
-#line 1454 "src/gen/po.tab.c"
+#line 1455 "src/gen/po.tab.c"
     break;
 
   case 20: /* statement_assign: IDENTIFIER OP_ASSIGN expression  */
-#line 120 "src/grammar/po.y"
+#line 121 "src/grammar/po.y"
                                       { (yyval.stmt) = statement_create_assign(identifier_create((yyvsp[-2].str_)), (yyvsp[0].expr)); }
-#line 1460 "src/gen/po.tab.c"
+#line 1461 "src/gen/po.tab.c"
     break;
 
   case 21: /* statement_if: IF L_PAREN expression R_PAREN block  */
-#line 124 "src/grammar/po.y"
+#line 125 "src/grammar/po.y"
                                                      { (yyval.stmt) = statement_create_if((yyvsp[-2].expr), (yyvsp[0].block)); }
-#line 1466 "src/gen/po.tab.c"
+#line 1467 "src/gen/po.tab.c"
     break;
 
   case 22: /* statement_if: IF L_PAREN expression R_PAREN block ELSE block  */
-#line 125 "src/grammar/po.y"
+#line 126 "src/grammar/po.y"
                                                      { (yyval.stmt) = statement_create_if_else((yyvsp[-4].expr), (yyvsp[-2].block), (yyvsp[0].block)); }
-#line 1472 "src/gen/po.tab.c"
+#line 1473 "src/gen/po.tab.c"
     break;
 
   case 23: /* statement_while: WHILE L_PAREN expression R_PAREN block  */
-#line 129 "src/grammar/po.y"
+#line 130 "src/grammar/po.y"
                                              { (yyval.stmt) = statement_create_while((yyvsp[-2].expr), (yyvsp[0].block)); }
-#line 1478 "src/gen/po.tab.c"
+#line 1479 "src/gen/po.tab.c"
     break;
 
   case 25: /* expression: expression OP_AND expression_logic_term  */
-#line 134 "src/grammar/po.y"
+#line 135 "src/grammar/po.y"
                                               { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1484 "src/gen/po.tab.c"
+#line 1485 "src/gen/po.tab.c"
     break;
 
   case 26: /* expression: expression OP_OR expression_logic_term  */
-#line 135 "src/grammar/po.y"
+#line 136 "src/grammar/po.y"
                                               { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1490 "src/gen/po.tab.c"
+#line 1491 "src/gen/po.tab.c"
     break;
 
   case 28: /* expression_logic_term: expression_logic_term OP_EQUALS expression_compared_term  */
-#line 140 "src/grammar/po.y"
+#line 141 "src/grammar/po.y"
                                                                    { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1496 "src/gen/po.tab.c"
+#line 1497 "src/gen/po.tab.c"
     break;
 
   case 29: /* expression_logic_term: expression_logic_term OP_NOT_EQUALS expression_compared_term  */
-#line 141 "src/grammar/po.y"
+#line 142 "src/grammar/po.y"
                                                                    { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1502 "src/gen/po.tab.c"
+#line 1503 "src/gen/po.tab.c"
     break;
 
   case 31: /* expression_compared_term: expression_compared_term OP_PLUS expression_term  */
-#line 146 "src/grammar/po.y"
+#line 147 "src/grammar/po.y"
                                                         { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1508 "src/gen/po.tab.c"
+#line 1509 "src/gen/po.tab.c"
     break;
 
   case 32: /* expression_compared_term: expression_compared_term OP_MINUS expression_term  */
-#line 147 "src/grammar/po.y"
+#line 148 "src/grammar/po.y"
                                                         { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1514 "src/gen/po.tab.c"
+#line 1515 "src/gen/po.tab.c"
     break;
 
   case 34: /* expression_term: expression_term OP_MUL expression_factor  */
-#line 152 "src/grammar/po.y"
+#line 153 "src/grammar/po.y"
                                                { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1520 "src/gen/po.tab.c"
+#line 1521 "src/gen/po.tab.c"
     break;
 
   case 35: /* expression_term: expression_term OP_DIV expression_factor  */
-#line 153 "src/grammar/po.y"
+#line 154 "src/grammar/po.y"
                                                { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1526 "src/gen/po.tab.c"
+#line 1527 "src/gen/po.tab.c"
     break;
 
   case 36: /* expression_factor: LIT_INT  */
-#line 157 "src/grammar/po.y"
+#line 158 "src/grammar/po.y"
                                  { (yyval.expr) = expression_create_literal(literal_create_int((yyvsp[0].int_))); }
-#line 1532 "src/gen/po.tab.c"
+#line 1533 "src/gen/po.tab.c"
     break;
 
   case 37: /* expression_factor: IDENTIFIER  */
-#line 158 "src/grammar/po.y"
+#line 159 "src/grammar/po.y"
                                  { (yyval.expr) = expression_create_identifier(identifier_create((yyvsp[0].str_))); }
-#line 1538 "src/gen/po.tab.c"
+#line 1539 "src/gen/po.tab.c"
     break;
 
   case 38: /* expression_factor: OP_NOT expression_factor  */
-#line 159 "src/grammar/po.y"
+#line 160 "src/grammar/po.y"
                                  { (yyval.expr) = expression_create_unary_op(unary_op_create((yyvsp[-1].una_op_type), (yyvsp[0].expr))); }
-#line 1544 "src/gen/po.tab.c"
+#line 1545 "src/gen/po.tab.c"
     break;
 
   case 39: /* expression_factor: L_PAREN expression R_PAREN  */
-#line 160 "src/grammar/po.y"
+#line 161 "src/grammar/po.y"
                                  { (yyval.expr) = (yyvsp[-1].expr); }
-#line 1550 "src/gen/po.tab.c"
+#line 1551 "src/gen/po.tab.c"
     break;
 
   case 40: /* block: L_BRACE delimiter_optional statement_list R_BRACE  */
-#line 164 "src/grammar/po.y"
+#line 165 "src/grammar/po.y"
                                                         { (yyval.block) = block_create((yyvsp[-1].stmt_list)); }
-#line 1556 "src/gen/po.tab.c"
+#line 1557 "src/gen/po.tab.c"
     break;
 
 
-#line 1560 "src/gen/po.tab.c"
+#line 1561 "src/gen/po.tab.c"
 
       default: break;
     }
@@ -1780,7 +1781,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 166 "src/grammar/po.y"
+#line 167 "src/grammar/po.y"
 
 
 void yyerror(Program **prog, const char *s) {

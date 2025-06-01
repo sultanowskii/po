@@ -2,19 +2,11 @@
 
 #include <malloc.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 #include "fmt.h"
 
-struct Literal {
-    LiteralType type;
-    union {
-        double           float_;
-        signed long long int_;
-    };
-};
-typedef struct Literal Literal;
-
-Literal *literal_create_int(signed long long value) {
+Literal *literal_create_int(int32_t value) {
     Literal *lit = malloc(sizeof(Literal));
     *lit = (Literal){
         .type = LITERAL_INT,

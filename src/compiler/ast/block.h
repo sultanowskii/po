@@ -5,7 +5,9 @@
 // Forward declarations
 typedef struct StatementList StatementList;
 
-struct Block;
+struct Block {
+    StatementList *statements;
+};
 typedef struct Block Block;
 
 Block *block_create(StatementList *statement_list);

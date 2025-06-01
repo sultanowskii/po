@@ -9,32 +9,6 @@
 #include "compiler/ast/statement_list.h"
 #include "fmt.h"
 
-struct Statement {
-    StatementType type;
-    union {
-        struct {
-            Identifier *ident;
-            Expression *expr;
-        } new_variable;
-        struct {
-            Identifier *ident;
-            Expression *expr;
-        } assign;
-        struct {
-            Expression *cond;
-            Block      *if_block;
-            Block      *else_block;
-        } if_;
-        struct {
-            Expression *cond;
-            Block      *block;
-        } while_;
-        struct {
-            Block *block;
-        } block;
-    };
-};
-
 Statement *statement_create_empty(void) {
     return malloc(sizeof(Statement));
 }

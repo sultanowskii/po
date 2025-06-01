@@ -6,12 +6,6 @@
 #include "compiler/ast/expression.h"
 #include "fmt.h"
 
-struct BinaryOp {
-    BinaryOpType op;
-    Expression  *left;
-    Expression  *right;
-};
-
 BinaryOp *binary_op_create(BinaryOpType op_type, Expression *left, Expression *right) {
     BinaryOp *bin_op = malloc(sizeof(BinaryOp));
     *bin_op = (BinaryOp){

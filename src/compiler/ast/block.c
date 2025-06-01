@@ -6,10 +6,6 @@
 #include "compiler/ast/statement_list.h"
 #include "fmt.h"
 
-struct Block {
-    StatementList *statements;
-};
-
 Block *block_create(StatementList *statement_list) {
     Block *block = malloc(sizeof(Block));
     block->statements = statement_list;

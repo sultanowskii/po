@@ -7,7 +7,31 @@ typedef struct Identifier Identifier;
 typedef struct Expression Expression;
 typedef struct Block      Block;
 
-struct Statement;
+struct Statement {
+    StatementType type;
+    union {
+        struct {
+            Identifier *ident;
+            Expression *expr;
+        } new_variable;
+        struct {
+            Identifier *ident;
+            Expression *expr;
+        } assign;
+        struct {
+            Expression *cond;
+            Block      *if_block;
+            Block      *else_block;
+        } if_;
+        struct {
+            Expression *cond;
+            Block      *block;
+        } while_;
+        struct {
+            Block *block;
+        } block;
+    };
+};
 typedef struct Statement Statement;
 
 enum StatementType {

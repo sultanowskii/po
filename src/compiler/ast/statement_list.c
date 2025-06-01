@@ -6,17 +6,6 @@
 
 #include "fmt.h"
 
-typedef struct StatementListNode StatementListNode;
-struct StatementListNode {
-    Statement         *stmt;
-    StatementListNode *next;
-};
-
-struct StatementList {
-    size_t             length;
-    StatementListNode *head;
-};
-
 static inline StatementListNode *statement_list_node_create(Statement *stmt, StatementListNode *next) {
     StatementListNode *node = malloc(sizeof(StatementListNode));
     node->stmt = stmt;

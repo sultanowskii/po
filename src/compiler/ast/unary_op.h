@@ -5,7 +5,10 @@
 // Forward declarations
 typedef struct Expression Expression;
 
-struct UnaryOp;
+struct UnaryOp {
+    UnaryOpType op;
+    Expression *expr;
+};
 typedef struct UnaryOp UnaryOp;
 
 enum UnaryOpType {

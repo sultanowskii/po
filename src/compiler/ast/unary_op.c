@@ -6,11 +6,6 @@
 #include "compiler/ast/expression.h"
 #include "fmt.h"
 
-struct UnaryOp {
-    UnaryOpType op;
-    Expression *expr;
-};
-
 UnaryOp *unary_op_create(UnaryOpType op_type, Expression *expr) {
     UnaryOp *una_op = malloc(sizeof(UnaryOp));
     *una_op = (UnaryOp){

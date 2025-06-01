@@ -4,7 +4,9 @@
 
 #include "compiler/ast/statement_list.h"
 
-struct Program;
+struct Program {
+    StatementList *statements;
+};
 typedef struct Program Program;
 
 Program *program_create(StatementList *statements);

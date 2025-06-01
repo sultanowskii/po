@@ -8,7 +8,15 @@ typedef struct BinaryOp   BinaryOp;
 typedef struct Literal    Literal;
 typedef struct Identifier Identifier;
 
-struct Expression;
+struct Expression {
+    ExpressionType type;
+    union {
+        UnaryOp    *una_op;
+        BinaryOp   *bin_op;
+        Literal    *literal;
+        Identifier *ident;
+    };
+};
 typedef struct Expression Expression;
 
 enum ExpressionType {

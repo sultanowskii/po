@@ -4,7 +4,16 @@
 
 #include "compiler/ast/statement.h"
 
-struct StatementList;
+typedef struct StatementListNode StatementListNode;
+struct StatementListNode {
+    Statement         *stmt;
+    StatementListNode *next;
+};
+
+struct StatementList {
+    size_t             length;
+    StatementListNode *head;
+};
 typedef struct StatementList StatementList;
 
 StatementList *statement_list_create(void);

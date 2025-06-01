@@ -9,16 +9,6 @@
 #include "compiler/ast/unary_op.h"
 #include "fmt.h"
 
-struct Expression {
-    ExpressionType type;
-    union {
-        UnaryOp    *una_op;
-        BinaryOp   *bin_op;
-        Literal    *literal;
-        Identifier *ident;
-    };
-};
-
 static inline Expression *expression_create_empty(void) {
     return malloc(sizeof(Expression));
 }

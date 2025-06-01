@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 18 "src/grammar/po.y"
+#line 19 "src/grammar/po.y"
 
     #include "compiler/ast/ast.h"
 
@@ -90,7 +90,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 29 "src/grammar/po.y"
+#line 30 "src/grammar/po.y"
 
     UnaryOpType una_op_type;
     BinaryOpType bin_op_type;
@@ -100,7 +100,7 @@ union YYSTYPE
     Statement *stmt;
     Block *block;
 
-    signed long long int_;
+    int32_t int_;
     char *str_;
 
 #line 107 "src/gen/po.tab.h"

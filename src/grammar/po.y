@@ -1,6 +1,7 @@
 // Prologue
 %{
     #include <stdio.h>
+    #include <inttypes.h>
 
     #include "compiler/ast/ast.h"
     // Stuff from Flex that Bison needs to know about:
@@ -35,7 +36,7 @@
     Statement *stmt;
     Block *block;
 
-    signed long long int_;
+    int32_t int_;
     char *str_;
 }
 

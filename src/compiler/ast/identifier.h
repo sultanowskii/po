@@ -2,7 +2,9 @@
 
 #include <stddef.h>
 
-struct Identifier;
+struct Identifier {
+    char *name;
+};
 typedef struct Identifier Identifier;
 
 Identifier *identifier_create(const char *name);
