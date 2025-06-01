@@ -1,7 +1,10 @@
 %{
 #include "gen/po.tab.h"
 
-extern int yylval;
+#include "compiler/ast/ast.h"
+#include "str.h"
+
+extern YYSTYPE yylval;
 %}
 
 %%
@@ -18,18 +21,18 @@ extern int yylval;
 ":=" { return OP_WALRUS; }
 "="  { return OP_ASSIGN; }
 
-"+"  { return OP_PLUS; }
-"-"  { return OP_MINUS; }
-"*"  { return OP_MUL; }
-"/"  { return OP_DIV; }
+"+"  { yylval.bin_op_type = BINARY_OP_PLUS; return OP_PLUS; }
+"-"  { yylval.bin_op_type = BINARY_OP_MINUS; return OP_MINUS; }
+"*"  { yylval.bin_op_type = BINARY_OP_MUL; return OP_MUL; }
+"/"  { yylval.bin_op_type = BINARY_OP_DIV; return OP_DIV; }
 
-"==" { return OP_EQUALS; }
-"!=" { return OP_NOT_EQUALS; }
+"==" { yylval.bin_op_type = BINARY_OP_EQUALS; return OP_EQUALS; }
+"!=" { yylval.bin_op_type = BINARY_OP_NOT_EQUALS; return OP_NOT_EQUALS; }
 
-[+-]?[1-9][0-9]*|0          { yylval = atoi(yytext); return LIT_INT; }
-[+-]?([1-9][0-9]*[.])[0-9]+ { yylval = atof(yytext); return LIT_FLOAT; }
+[+-]?[1-9][0-9]*|0          { yylval.int_ = atoi(yytext); return LIT_INT; }
+[+-]?([1-9][0-9]*[.])[0-9]+ { yylval.float_ = atof(yytext); return LIT_FLOAT; }
 
-[a-zA-Z_][a-zA-Z0-9_]* { return IDENTIFIER; }
+[a-zA-Z_][a-zA-Z0-9_]* { yylval.str_ = strdup(yytext); return IDENTIFIER; }
 
 [\n\r]+ { return EOL; }
 %%

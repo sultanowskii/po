@@ -1,14 +1,45 @@
+// Prologue
 %{
-#include <stdio.h>
+    #include <stdio.h>
 
-// Stuff from Flex that Bison needs to know about:
-extern int yylex();
-extern int yyparse();
-extern FILE *yyin;
+    #include "compiler/ast/ast.h"
+    // Stuff from Flex that Bison needs to know about:
+    extern int yylex();
+    extern FILE *yyin;
 
-void yyerror(const char *s);
+    void yyerror(Program **prog, const char *s);
+
+    int yydebug = 1;
+    #define YYDEBUG 1
 %}
 
+// Required includes for all generated files
+// Without this, generated header won't #include ast.h.
+%code requires {
+    #include "compiler/ast/ast.h"
+}
+
+// Enabling verbose errors
+%define parse.error verbose
+
+// Add yyparse() param - the program itself.
+%parse-param {Program **program}
+
+// YYSTYPE definition. Is used in Lexer (yylval) and here
+%union {
+    BinaryOpType bin_op_type;
+    Expression *expr;
+    Program *program;
+    StatementList *stmt_list;
+    Statement *stmt;
+    Block *block;
+
+    double float_;
+    signed long long int_;
+    char *str_;
+}
+
+// Tokens
 %token IF
 %token ELSE
 %token WHILE
@@ -19,39 +50,56 @@ void yyerror(const char *s);
 %token R_BRACE
 %token SEMICOLON
 
-%token OP_WALRUS
-%token OP_ASSIGN
+%token <bin_op_type> OP_WALRUS
+%token <bin_op_type> OP_ASSIGN
 
-%token OP_PLUS
-%token OP_MINUS
-%token OP_MUL
-%token OP_DIV
+%token <bin_op_type> OP_PLUS
+%token <bin_op_type> OP_MINUS
+%token <bin_op_type> OP_MUL
+%token <bin_op_type> OP_DIV
 
-%token OP_EQUALS
-%token OP_NOT_EQUALS
+%token <bin_op_type> OP_EQUALS
+%token <bin_op_type> OP_NOT_EQUALS
 
-%token LIT_INT
-%token LIT_FLOAT
+%token <int_> LIT_INT
+%token <float_> LIT_FLOAT
 
-%token IDENTIFIER
+%token <str_> IDENTIFIER
 
 %token EOL
 
+// Types of non-terminal tokens.
+%type <expr> expression expression_compared_term expression_term expression_factor
+%type <stmt> statement statement_new_variable statement_assign statement_if statement_while
+%type <stmt_list> statement_list non_empty_statement_list
+%type <block> block
+
 %%
 prog
-    : statement_list YYEOF
+    : delimiter_optional statement_list YYEOF { *program = program_create($2); }
     ;
 
 statement_list
-    : { puts("EMPTY STATEMENT LIST"); }
+    :                                    { $$ = statement_list_create(); }
+    | non_empty_statement_list delimiter
     | non_empty_statement_list
     ;
 
 non_empty_statement_list
-    : statement
-    | non_empty_statement_list EOL statement
-    | non_empty_statement_list SEMICOLON statement
-    | non_empty_statement_list SEMICOLON EOL statement
+    : statement                                    { $$ = statement_list_create(); statement_list_add_statement($$, $1); }
+    | non_empty_statement_list delimiter statement { statement_list_add_statement($1, $3); }
+    ;
+
+delimiter
+    : EOL
+    | SEMICOLON
+    | delimiter EOL
+    | delimiter SEMICOLON
+    ;
+
+delimiter_optional
+    :
+    | delimiter
     ;
 
 statement
@@ -59,61 +107,56 @@ statement
     | statement_assign
     | statement_if
     | statement_while
-    | block
+    | block                  { $$ = statement_create_block($1); }
     ;
 
 statement_new_variable
-    : IDENTIFIER OP_WALRUS expression
+    : IDENTIFIER OP_WALRUS expression { $$ = statement_create_new_variable(identifier_create($1), $3); }
     ;
 
 statement_assign
-    : IDENTIFIER OP_ASSIGN expression
+    : IDENTIFIER OP_ASSIGN expression { $$ = statement_create_assign(identifier_create($1), $3); }
     ;
 
 statement_if
-    : IF L_PAREN expression R_PAREN block
-    | IF L_PAREN expression R_PAREN block ELSE block
+    : IF L_PAREN expression R_PAREN block            { $$ = statement_create_if($3, $5); }
+    | IF L_PAREN expression R_PAREN block ELSE block { $$ = statement_create_if_else($3, $5, $7); }
     ;
 
 statement_while
-    : WHILE L_PAREN expression R_PAREN block
+    : WHILE L_PAREN expression R_PAREN block { $$ = statement_create_while($3, $5); }
     ;
 
 expression
     : expression_compared_term
-    | expression OP_EQUALS expression_compared_term
-    | expression OP_NOT_EQUALS expression_compared_term
+    | expression OP_EQUALS expression_compared_term     { $$ = expression_create_binary_op(binary_op_create($2, $1, $3)); }
+    | expression OP_NOT_EQUALS expression_compared_term { $$ = expression_create_binary_op(binary_op_create($2, $1, $3)); }
     ;
 
 expression_compared_term
     : expression_term
-    | expression_compared_term OP_PLUS expression_term
-    | expression_compared_term OP_MINUS expression_term
+    | expression_compared_term OP_PLUS expression_term  { $$ = expression_create_binary_op(binary_op_create($2, $1, $3)); }
+    | expression_compared_term OP_MINUS expression_term { $$ = expression_create_binary_op(binary_op_create($2, $1, $3)); }
     ;
 
 expression_term
     : expression_factor
-    | expression_term OP_MUL expression_factor
-    | expression_term OP_DIV expression_factor
+    | expression_term OP_MUL expression_factor { $$ = expression_create_binary_op(binary_op_create($2, $1, $3)); }
+    | expression_term OP_DIV expression_factor { $$ = expression_create_binary_op(binary_op_create($2, $1, $3)); }
     ;
 
 expression_factor
-    : LIT_FLOAT
-    | LIT_INT
-    | IDENTIFIER
-    | L_PAREN expression R_PAREN
+    : LIT_FLOAT                  { $$ = expression_create_literal(literal_create_float($1)); }
+    | LIT_INT                    { $$ = expression_create_literal(literal_create_int($1)); }
+    | IDENTIFIER                 { $$ = expression_create_identifier(identifier_create($1)); }
+    | L_PAREN expression R_PAREN { $$ = $2; }
     ;
 
 block
-    : L_BRACE statement_list R_BRACE
+    : L_BRACE delimiter_optional statement_list R_BRACE { $$ = block_create($3); }
     ;
 %%
 
-int main(int argc, char **argv) {
-    yyparse();
-    return 0;
-}
-
-void yyerror(const char *s) {
+void yyerror(Program **prog, const char *s) {
     fprintf(stderr, "error: %s\n", s);
 }

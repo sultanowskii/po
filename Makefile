@@ -32,7 +32,7 @@ $(PARSER_GEN_SRCS): $(PARSER_DEFINITION)
 	bison -Wcounterexamples --output=$(PARSER_GEN_SRC) --header=$(PARSER_GEN_HDR) $<
 
 $(LEXER_GEN_SRCS): $(LEXER_DEFINITION)
-	flex --output=$(LEXER_GEN_SRC) $<
+	flex --outfile=$(LEXER_GEN_SRC) $<
 
 .PHONY: graph
 # Uses graphviz tool (dot)
@@ -48,6 +48,7 @@ clang-format:
 .PHONY: clean
 clean:
 	rm -f $(TARGET)
+	rm -f $(OBJS)
 	rm -f *.elf
 	rm -f *.gv
 	rm -f *.png

@@ -1,8 +1,10 @@
 #include "compiler/ast/program.h"
 
 #include <malloc.h>
+#include <stdio.h>
 
 #include "compiler/ast/statement_list.h"
+#include "fmt.h"
 
 struct Program {
     StatementList *statements;
@@ -19,3 +21,10 @@ Program *program_destroy(Program *program) {
     free(program);
 }
 
+void print_program(Program *prog, size_t padding) {
+    puts("Program");
+
+    print_padding(padding + 1);
+    puts("statements:");
+    statement_list_print(prog->statements, padding + 2);
+}

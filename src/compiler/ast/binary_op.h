@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h>
+
 // Forward declarations
 typedef struct Expression Expression;
 
@@ -17,4 +19,5 @@ enum BinaryOpType {
 typedef enum BinaryOpType BinaryOpType;
 
 BinaryOp *binary_op_create(BinaryOpType op_type, Expression *left, Expression *right);
+void      binary_op_print(BinaryOp *bin_op, size_t padding);
 void      binary_op_destroy(BinaryOp *bin_op);

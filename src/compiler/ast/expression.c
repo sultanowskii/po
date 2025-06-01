@@ -1,10 +1,12 @@
 #include "compiler/ast/expression.h"
 
 #include <malloc.h>
+#include <stdio.h>
 
 #include "compiler/ast/binary_op.h"
 #include "compiler/ast/identifier.h"
 #include "compiler/ast/literal.h"
+#include "fmt.h"
 
 struct Expression {
     ExpressionType type;
@@ -59,4 +61,35 @@ void expression_destroy(Expression *expression) {
             break;
     }
     free(expression);
+}
+
+static inline char *expression_type_to_str(Expression *expr) {
+    switch (expr->type) {
+        case EXPRESSION_LITERAL:
+            return "literal";
+        case EXPRESSION_IDENTIFIER:
+            return "identifier";
+        case EXPRESSION_BINARY_OP:
+            return "binary_op";
+    }
+    return "unknown";
+}
+
+void expression_print(Expression *expression, size_t padding) {
+    print_padding(padding);
+    printf("Expression[type=%s]\n", expression_type_to_str(expression));
+
+    print_padding(padding + 1);
+    puts("value:");
+    switch (expression->type) {
+        case EXPRESSION_LITERAL:
+            literal_print(expression->literal, padding + 2);
+            break;
+        case EXPRESSION_IDENTIFIER:
+            identifier_print(expression->ident, padding + 2);
+            break;
+        case EXPRESSION_BINARY_OP:
+            binary_op_print(expression->bin_op, padding + 2);
+            break;
+    }
 }

@@ -471,9 +471,12 @@ char *yytext;
 #line 2 "src/grammar/po.l"
 #include "gen/po.tab.h"
 
-extern int yylval;
-#line 475 "src/gen/po.yy.c"
-#line 476 "src/gen/po.yy.c"
+#include "compiler/ast/ast.h"
+#include "str.h"
+
+extern YYSTYPE yylval;
+#line 478 "src/gen/po.yy.c"
+#line 479 "src/gen/po.yy.c"
 
 #define INITIAL 0
 
@@ -690,9 +693,9 @@ YY_DECL
 		}
 
 	{
-#line 7 "src/grammar/po.l"
+#line 10 "src/grammar/po.l"
 
-#line 695 "src/gen/po.yy.c"
+#line 698 "src/gen/po.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -751,111 +754,111 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 8 "src/grammar/po.l"
+#line 11 "src/grammar/po.l"
 { return IF; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 9 "src/grammar/po.l"
+#line 12 "src/grammar/po.l"
 { return ELSE; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 10 "src/grammar/po.l"
+#line 13 "src/grammar/po.l"
 { return WHILE; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 12 "src/grammar/po.l"
+#line 15 "src/grammar/po.l"
 { return L_PAREN; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 13 "src/grammar/po.l"
+#line 16 "src/grammar/po.l"
 { return R_PAREN; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 14 "src/grammar/po.l"
+#line 17 "src/grammar/po.l"
 { return L_BRACE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 15 "src/grammar/po.l"
+#line 18 "src/grammar/po.l"
 { return R_BRACE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 16 "src/grammar/po.l"
+#line 19 "src/grammar/po.l"
 { return SEMICOLON; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 18 "src/grammar/po.l"
+#line 21 "src/grammar/po.l"
 { return OP_WALRUS; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 19 "src/grammar/po.l"
+#line 22 "src/grammar/po.l"
 { return OP_ASSIGN; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 21 "src/grammar/po.l"
-{ return OP_PLUS; }
+#line 24 "src/grammar/po.l"
+{ yylval.bin_op_type = BINARY_OP_PLUS; return OP_PLUS; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 22 "src/grammar/po.l"
-{ return OP_MINUS; }
+#line 25 "src/grammar/po.l"
+{ yylval.bin_op_type = BINARY_OP_MINUS; return OP_MINUS; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 23 "src/grammar/po.l"
-{ return OP_MUL; }
+#line 26 "src/grammar/po.l"
+{ yylval.bin_op_type = BINARY_OP_MUL; return OP_MUL; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 24 "src/grammar/po.l"
-{ return OP_DIV; }
+#line 27 "src/grammar/po.l"
+{ yylval.bin_op_type = BINARY_OP_DIV; return OP_DIV; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 26 "src/grammar/po.l"
-{ return OP_EQUALS; }
+#line 29 "src/grammar/po.l"
+{ yylval.bin_op_type = BINARY_OP_EQUALS; return OP_EQUALS; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 27 "src/grammar/po.l"
-{ return OP_NOT_EQUALS; }
+#line 30 "src/grammar/po.l"
+{ yylval.bin_op_type = BINARY_OP_NOT_EQUALS; return OP_NOT_EQUALS; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 29 "src/grammar/po.l"
-{ yylval = atoi(yytext); return LIT_INT; }
+#line 32 "src/grammar/po.l"
+{ yylval.int_ = atoi(yytext); return LIT_INT; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 30 "src/grammar/po.l"
-{ yylval = atof(yytext); return LIT_FLOAT; }
+#line 33 "src/grammar/po.l"
+{ yylval.float_ = atof(yytext); return LIT_FLOAT; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 32 "src/grammar/po.l"
-{ return IDENTIFIER; }
+#line 35 "src/grammar/po.l"
+{ yylval.str_ = strdup(yytext); return IDENTIFIER; }
 	YY_BREAK
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 34 "src/grammar/po.l"
+#line 37 "src/grammar/po.l"
 { return EOL; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 35 "src/grammar/po.l"
+#line 38 "src/grammar/po.l"
 ECHO;
 	YY_BREAK
-#line 858 "src/gen/po.yy.c"
+#line 861 "src/gen/po.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1860,6 +1863,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 35 "src/grammar/po.l"
+#line 38 "src/grammar/po.l"
 
 

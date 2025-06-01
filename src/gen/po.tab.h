@@ -44,6 +44,12 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 18 "src/grammar/po.y"
+
+    #include "compiler/ast/ast.h"
+
+#line 53 "src/gen/po.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -80,7 +86,25 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+union YYSTYPE
+{
+#line 29 "src/grammar/po.y"
+
+    BinaryOpType bin_op_type;
+    Expression *expr;
+    Program *program;
+    StatementList *stmt_list;
+    Statement *stmt;
+    Block *block;
+
+    double float_;
+    signed long long int_;
+    char *str_;
+
+#line 105 "src/gen/po.tab.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -89,7 +113,7 @@ typedef int YYSTYPE;
 extern YYSTYPE yylval;
 
 
-int yyparse (void);
+int yyparse (Program **program);
 
 
 #endif /* !YY_YY_SRC_GEN_PO_TAB_H_INCLUDED  */

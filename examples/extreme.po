@@ -1,0 +1,19 @@
+
+a    :=   123   ;
+
+; b := 0
+
+misses := 0
+
+while (a != 0) {
+
+
+    b = b + 1;;;;; b = b + 0
+  ;  a = a - 1
+
+            if (b == 1337) {
+               b = 228
+        } else   {  misses = misses + 1  }}
+
+
+

@@ -2,6 +2,9 @@
 
 #include <malloc.h>
 #include <stddef.h>
+#include <stdio.h>
+
+#include "fmt.h"
 
 typedef struct StatementListNode StatementListNode;
 struct StatementListNode {
@@ -58,4 +61,15 @@ void statement_list_destroy(StatementList *list) {
         node = next;
     }
     free(list);
+}
+
+void statement_list_print(StatementList *list, size_t padding) {
+    print_padding(padding);
+    printf("StatementList[length=%zu]\n", list->length);
+
+    StatementListNode *node = list->head;
+    while (node != NULL) {
+        statement_print(node->stmt, padding + 2);
+        node = node->next;
+    }
 }
