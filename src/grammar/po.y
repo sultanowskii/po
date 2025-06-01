@@ -27,6 +27,7 @@
 
 // YYSTYPE definition. Is used in Lexer (yylval) and here
 %union {
+    UnaryOpType una_op_type;
     BinaryOpType bin_op_type;
     Expression *expr;
     Program *program;
@@ -57,9 +58,12 @@
 %token <bin_op_type> OP_MINUS
 %token <bin_op_type> OP_MUL
 %token <bin_op_type> OP_DIV
-
+%token <bin_op_type> OP_AND
+%token <bin_op_type> OP_OR
 %token <bin_op_type> OP_EQUALS
 %token <bin_op_type> OP_NOT_EQUALS
+
+%token <una_op_type> OP_NOT
 
 %token <int_> LIT_INT
 %token <float_> LIT_FLOAT
@@ -69,7 +73,7 @@
 %token EOL
 
 // Types of non-terminal tokens.
-%type <expr> expression expression_compared_term expression_term expression_factor
+%type <expr> expression expression_logic_term expression_compared_term expression_term expression_factor
 %type <stmt> statement statement_new_variable statement_assign statement_if statement_while
 %type <stmt_list> statement_list non_empty_statement_list
 %type <block> block
@@ -128,9 +132,15 @@ statement_while
     ;
 
 expression
+    : expression_logic_term
+    | expression OP_AND expression_logic_term { $$ = expression_create_binary_op(binary_op_create($2, $1, $3)); }
+    | expression OP_OR expression_logic_term  { $$ = expression_create_binary_op(binary_op_create($2, $1, $3)); }
+    ;
+
+expression_logic_term
     : expression_compared_term
-    | expression OP_EQUALS expression_compared_term     { $$ = expression_create_binary_op(binary_op_create($2, $1, $3)); }
-    | expression OP_NOT_EQUALS expression_compared_term { $$ = expression_create_binary_op(binary_op_create($2, $1, $3)); }
+    | expression_logic_term OP_EQUALS expression_compared_term     { $$ = expression_create_binary_op(binary_op_create($2, $1, $3)); }
+    | expression_logic_term OP_NOT_EQUALS expression_compared_term { $$ = expression_create_binary_op(binary_op_create($2, $1, $3)); }
     ;
 
 expression_compared_term
@@ -149,6 +159,7 @@ expression_factor
     : LIT_FLOAT                  { $$ = expression_create_literal(literal_create_float($1)); }
     | LIT_INT                    { $$ = expression_create_literal(literal_create_int($1)); }
     | IDENTIFIER                 { $$ = expression_create_identifier(identifier_create($1)); }
+    | OP_NOT expression_factor   { $$ = expression_create_unary_op(unary_op_create($1, $2)); }
     | L_PAREN expression R_PAREN { $$ = $2; }
     ;
 

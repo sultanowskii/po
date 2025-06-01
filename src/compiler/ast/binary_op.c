@@ -30,18 +30,22 @@ void binary_op_destroy(BinaryOp *bin_op) {
 
 static inline char *bin_op_type_to_str(BinaryOp *bin_op) {
     switch (bin_op->op) {
-        case BINARY_OP_EQUALS:
-            return "==";
-        case BINARY_OP_NOT_EQUALS:
-            return "!=";
-        case BINARY_OP_PLUS:
-            return "+";
-        case BINARY_OP_MINUS:
-            return "-";
-        case BINARY_OP_MUL:
-            return "*";
-        case BINARY_OP_DIV:
-            return "/";
+    case BINARY_OP_AND:
+        return "&&";
+    case BINARY_OP_OR:
+        return "||";
+    case BINARY_OP_EQUALS:
+        return "==";
+    case BINARY_OP_NOT_EQUALS:
+        return "!=";
+    case BINARY_OP_PLUS:
+        return "+";
+    case BINARY_OP_MINUS:
+        return "-";
+    case BINARY_OP_MUL:
+        return "*";
+    case BINARY_OP_DIV:
+        return "/";
     }
     return "unknown";
 }

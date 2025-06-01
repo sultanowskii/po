@@ -126,28 +126,32 @@ enum yysymbol_kind_t
   YYSYMBOL_OP_MINUS = 14,                  /* OP_MINUS  */
   YYSYMBOL_OP_MUL = 15,                    /* OP_MUL  */
   YYSYMBOL_OP_DIV = 16,                    /* OP_DIV  */
-  YYSYMBOL_OP_EQUALS = 17,                 /* OP_EQUALS  */
-  YYSYMBOL_OP_NOT_EQUALS = 18,             /* OP_NOT_EQUALS  */
-  YYSYMBOL_LIT_INT = 19,                   /* LIT_INT  */
-  YYSYMBOL_LIT_FLOAT = 20,                 /* LIT_FLOAT  */
-  YYSYMBOL_IDENTIFIER = 21,                /* IDENTIFIER  */
-  YYSYMBOL_EOL = 22,                       /* EOL  */
-  YYSYMBOL_YYACCEPT = 23,                  /* $accept  */
-  YYSYMBOL_prog = 24,                      /* prog  */
-  YYSYMBOL_statement_list = 25,            /* statement_list  */
-  YYSYMBOL_non_empty_statement_list = 26,  /* non_empty_statement_list  */
-  YYSYMBOL_delimiter = 27,                 /* delimiter  */
-  YYSYMBOL_delimiter_optional = 28,        /* delimiter_optional  */
-  YYSYMBOL_statement = 29,                 /* statement  */
-  YYSYMBOL_statement_new_variable = 30,    /* statement_new_variable  */
-  YYSYMBOL_statement_assign = 31,          /* statement_assign  */
-  YYSYMBOL_statement_if = 32,              /* statement_if  */
-  YYSYMBOL_statement_while = 33,           /* statement_while  */
-  YYSYMBOL_expression = 34,                /* expression  */
-  YYSYMBOL_expression_compared_term = 35,  /* expression_compared_term  */
-  YYSYMBOL_expression_term = 36,           /* expression_term  */
-  YYSYMBOL_expression_factor = 37,         /* expression_factor  */
-  YYSYMBOL_block = 38                      /* block  */
+  YYSYMBOL_OP_AND = 17,                    /* OP_AND  */
+  YYSYMBOL_OP_OR = 18,                     /* OP_OR  */
+  YYSYMBOL_OP_EQUALS = 19,                 /* OP_EQUALS  */
+  YYSYMBOL_OP_NOT_EQUALS = 20,             /* OP_NOT_EQUALS  */
+  YYSYMBOL_OP_NOT = 21,                    /* OP_NOT  */
+  YYSYMBOL_LIT_INT = 22,                   /* LIT_INT  */
+  YYSYMBOL_LIT_FLOAT = 23,                 /* LIT_FLOAT  */
+  YYSYMBOL_IDENTIFIER = 24,                /* IDENTIFIER  */
+  YYSYMBOL_EOL = 25,                       /* EOL  */
+  YYSYMBOL_YYACCEPT = 26,                  /* $accept  */
+  YYSYMBOL_prog = 27,                      /* prog  */
+  YYSYMBOL_statement_list = 28,            /* statement_list  */
+  YYSYMBOL_non_empty_statement_list = 29,  /* non_empty_statement_list  */
+  YYSYMBOL_delimiter = 30,                 /* delimiter  */
+  YYSYMBOL_delimiter_optional = 31,        /* delimiter_optional  */
+  YYSYMBOL_statement = 32,                 /* statement  */
+  YYSYMBOL_statement_new_variable = 33,    /* statement_new_variable  */
+  YYSYMBOL_statement_assign = 34,          /* statement_assign  */
+  YYSYMBOL_statement_if = 35,              /* statement_if  */
+  YYSYMBOL_statement_while = 36,           /* statement_while  */
+  YYSYMBOL_expression = 37,                /* expression  */
+  YYSYMBOL_expression_logic_term = 38,     /* expression_logic_term  */
+  YYSYMBOL_expression_compared_term = 39,  /* expression_compared_term  */
+  YYSYMBOL_expression_term = 40,           /* expression_term  */
+  YYSYMBOL_expression_factor = 41,         /* expression_factor  */
+  YYSYMBOL_block = 42                      /* block  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -475,19 +479,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  6
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   59
+#define YYLAST   66
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  23
+#define YYNTOKENS  26
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  16
+#define YYNNTS  17
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  37
+#define YYNRULES  41
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  62
+#define YYNSTATES  69
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   277
+#define YYMAXUTOK   280
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -528,17 +532,19 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    22
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    79,    79,    83,    84,    85,    89,    90,    94,    95,
-      96,    97,   101,   102,   106,   107,   108,   109,   110,   114,
-     118,   122,   123,   127,   131,   132,   133,   137,   138,   139,
-     143,   144,   145,   149,   150,   151,   152,   156
+       0,    83,    83,    87,    88,    89,    93,    94,    98,    99,
+     100,   101,   105,   106,   110,   111,   112,   113,   114,   118,
+     122,   126,   127,   131,   135,   136,   137,   141,   142,   143,
+     147,   148,   149,   153,   154,   155,   159,   160,   161,   162,
+     163,   167
 };
 #endif
 
@@ -556,11 +562,12 @@ static const char *const yytname[] =
 {
   "\"end of file\"", "error", "\"invalid token\"", "IF", "ELSE", "WHILE",
   "L_PAREN", "R_PAREN", "L_BRACE", "R_BRACE", "SEMICOLON", "OP_WALRUS",
-  "OP_ASSIGN", "OP_PLUS", "OP_MINUS", "OP_MUL", "OP_DIV", "OP_EQUALS",
-  "OP_NOT_EQUALS", "LIT_INT", "LIT_FLOAT", "IDENTIFIER", "EOL", "$accept",
-  "prog", "statement_list", "non_empty_statement_list", "delimiter",
-  "delimiter_optional", "statement", "statement_new_variable",
-  "statement_assign", "statement_if", "statement_while", "expression",
+  "OP_ASSIGN", "OP_PLUS", "OP_MINUS", "OP_MUL", "OP_DIV", "OP_AND",
+  "OP_OR", "OP_EQUALS", "OP_NOT_EQUALS", "OP_NOT", "LIT_INT", "LIT_FLOAT",
+  "IDENTIFIER", "EOL", "$accept", "prog", "statement_list",
+  "non_empty_statement_list", "delimiter", "delimiter_optional",
+  "statement", "statement_new_variable", "statement_assign",
+  "statement_if", "statement_while", "expression", "expression_logic_term",
   "expression_compared_term", "expression_term", "expression_factor",
   "block", YY_NULLPTR
 };
@@ -572,7 +579,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-40)
+#define YYPACT_NINF (-41)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -586,13 +593,13 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -2,   -40,   -40,    11,     2,     1,   -40,   -40,   -40,    20,
-      23,    -2,    19,    13,    -2,   -40,   -40,   -40,   -40,   -40,
-     -40,    -5,    -5,     1,    -5,    -5,   -40,    -3,    -5,   -40,
-     -40,   -40,    10,    28,    29,   -40,    16,    37,    30,    30,
-     -40,    18,    24,    -5,    -5,    -5,    -5,    -5,    -5,    24,
-     -40,   -40,    34,    28,    28,    29,    29,   -40,   -40,   -40,
-      24,   -40
+      -3,   -41,   -41,    12,    10,     5,   -41,   -41,   -41,     9,
+      37,    -3,    -9,    51,    -3,   -41,   -41,   -41,   -41,   -41,
+     -41,    -5,    -5,     5,    -5,    -5,   -41,     1,    -5,    -5,
+     -41,   -41,   -41,    14,    17,    33,    18,   -41,    21,    45,
+      32,    32,   -41,    23,   -41,    49,    -5,    -5,    -5,    -5,
+      -5,    -5,    -5,    -5,    49,   -41,   -41,    56,    17,    17,
+      33,    33,    18,    18,   -41,   -41,   -41,    49,   -41
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -602,25 +609,25 @@ static const yytype_int8 yydefact[] =
 {
       12,     9,     8,     0,    13,     3,     1,    11,    10,     0,
        0,    12,     0,     0,     5,     6,    14,    15,    16,    17,
-      18,     0,     0,     3,     0,     0,     2,     4,     0,    34,
-      33,    35,     0,    24,    27,    30,     0,     0,    19,    20,
-       7,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-      37,    36,    21,    25,    26,    28,    29,    31,    32,    23,
-       0,    22
+      18,     0,     0,     3,     0,     0,     2,     4,     0,     0,
+      37,    36,    38,     0,    24,    27,    30,    33,     0,     0,
+      19,    20,     7,     0,    39,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    41,    40,    21,    25,    26,
+      28,    29,    31,    32,    34,    35,    23,     0,    22
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -40,   -40,    31,   -40,    43,    40,    32,   -40,   -40,   -40,
-     -40,    15,     6,     7,     8,   -39
+     -41,   -41,    38,   -41,    48,    52,    39,   -41,   -41,   -41,
+     -41,    20,     6,     7,     8,   -29,   -40
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
        0,     3,    13,    14,     4,     5,    15,    16,    17,    18,
-      19,    32,    33,    34,    35,    20
+      19,    33,    34,    35,    36,    37,    20
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -628,44 +635,47 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       9,    28,    10,    52,     9,    11,    10,     7,     1,    11,
-      59,     6,     7,    26,    29,    30,    31,    42,    12,     8,
-       2,    61,    12,    49,     8,    51,    21,    43,    44,    22,
-      24,    25,    11,    43,    44,    43,    44,    36,    60,    38,
-      39,    45,    46,    41,    47,    48,    50,    43,    44,    53,
-      54,    23,    55,    56,    37,    57,    58,    27,     0,    40
+      44,    28,    24,    25,     9,    57,    10,     1,     9,    11,
+      10,     7,     6,    11,    66,    21,    29,    30,    31,    32,
+       7,    45,     2,    64,    65,    12,     8,    68,    54,    12,
+      56,    46,    47,    52,    53,     8,    48,    49,    46,    47,
+      46,    47,    38,    22,    40,    41,    50,    51,    43,    46,
+      47,    26,    58,    59,    55,    60,    61,    11,    62,    63,
+      67,    39,    27,    23,     0,     0,    42
 };
 
 static const yytype_int8 yycheck[] =
 {
-       3,     6,     5,    42,     3,     8,     5,    10,    10,     8,
-      49,     0,    10,     0,    19,    20,    21,     7,    21,    22,
-      22,    60,    21,     7,    22,     7,     6,    17,    18,     6,
-      11,    12,     8,    17,    18,    17,    18,    22,     4,    24,
-      25,    13,    14,    28,    15,    16,     9,    17,    18,    43,
-      44,    11,    45,    46,    23,    47,    48,    14,    -1,    27
+      29,     6,    11,    12,     3,    45,     5,    10,     3,     8,
+       5,    10,     0,     8,    54,     6,    21,    22,    23,    24,
+      10,     7,    25,    52,    53,    24,    25,    67,     7,    24,
+       7,    17,    18,    15,    16,    25,    19,    20,    17,    18,
+      17,    18,    22,     6,    24,    25,    13,    14,    28,    17,
+      18,     0,    46,    47,     9,    48,    49,     8,    50,    51,
+       4,    23,    14,    11,    -1,    -1,    27
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    10,    22,    24,    27,    28,     0,    10,    22,     3,
-       5,     8,    21,    25,    26,    29,    30,    31,    32,    33,
-      38,     6,     6,    28,    11,    12,     0,    27,     6,    19,
-      20,    21,    34,    35,    36,    37,    34,    25,    34,    34,
-      29,    34,     7,    17,    18,    13,    14,    15,    16,     7,
-       9,     7,    38,    35,    35,    36,    36,    37,    37,    38,
-       4,    38
+       0,    10,    25,    27,    30,    31,     0,    10,    25,     3,
+       5,     8,    24,    28,    29,    32,    33,    34,    35,    36,
+      42,     6,     6,    31,    11,    12,     0,    30,     6,    21,
+      22,    23,    24,    37,    38,    39,    40,    41,    37,    28,
+      37,    37,    32,    37,    41,     7,    17,    18,    19,    20,
+      13,    14,    15,    16,     7,     9,     7,    42,    38,    38,
+      39,    39,    40,    40,    41,    41,    42,     4,    42
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    23,    24,    25,    25,    25,    26,    26,    27,    27,
-      27,    27,    28,    28,    29,    29,    29,    29,    29,    30,
-      31,    32,    32,    33,    34,    34,    34,    35,    35,    35,
-      36,    36,    36,    37,    37,    37,    37,    38
+       0,    26,    27,    28,    28,    28,    29,    29,    30,    30,
+      30,    30,    31,    31,    32,    32,    32,    32,    32,    33,
+      34,    35,    35,    36,    37,    37,    37,    38,    38,    38,
+      39,    39,    39,    40,    40,    40,    41,    41,    41,    41,
+      41,    42
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -674,7 +684,8 @@ static const yytype_int8 yyr2[] =
        0,     2,     3,     0,     2,     1,     1,     3,     1,     1,
        2,     2,     0,     1,     1,     1,     1,     1,     1,     3,
        3,     5,     7,     5,     1,     3,     3,     1,     3,     3,
-       1,     3,     3,     1,     1,     1,     3,     4
+       1,     3,     3,     1,     3,     3,     1,     1,     1,     2,
+       3,     4
 };
 
 
@@ -1410,133 +1421,151 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* prog: delimiter_optional statement_list $end  */
-#line 79 "src/grammar/po.y"
+#line 83 "src/grammar/po.y"
                                               { *program = program_create((yyvsp[-1].stmt_list)); }
-#line 1416 "src/gen/po.tab.c"
+#line 1427 "src/gen/po.tab.c"
     break;
 
   case 3: /* statement_list: %empty  */
-#line 83 "src/grammar/po.y"
+#line 87 "src/grammar/po.y"
                                          { (yyval.stmt_list) = statement_list_create(); }
-#line 1422 "src/gen/po.tab.c"
+#line 1433 "src/gen/po.tab.c"
     break;
 
   case 6: /* non_empty_statement_list: statement  */
-#line 89 "src/grammar/po.y"
+#line 93 "src/grammar/po.y"
                                                    { (yyval.stmt_list) = statement_list_create(); statement_list_add_statement((yyval.stmt_list), (yyvsp[0].stmt)); }
-#line 1428 "src/gen/po.tab.c"
+#line 1439 "src/gen/po.tab.c"
     break;
 
   case 7: /* non_empty_statement_list: non_empty_statement_list delimiter statement  */
-#line 90 "src/grammar/po.y"
+#line 94 "src/grammar/po.y"
                                                    { statement_list_add_statement((yyvsp[-2].stmt_list), (yyvsp[0].stmt)); }
-#line 1434 "src/gen/po.tab.c"
+#line 1445 "src/gen/po.tab.c"
     break;
 
   case 18: /* statement: block  */
-#line 110 "src/grammar/po.y"
+#line 114 "src/grammar/po.y"
                              { (yyval.stmt) = statement_create_block((yyvsp[0].block)); }
-#line 1440 "src/gen/po.tab.c"
+#line 1451 "src/gen/po.tab.c"
     break;
 
   case 19: /* statement_new_variable: IDENTIFIER OP_WALRUS expression  */
-#line 114 "src/grammar/po.y"
+#line 118 "src/grammar/po.y"
                                       { (yyval.stmt) = statement_create_new_variable(identifier_create((yyvsp[-2].str_)), (yyvsp[0].expr)); }
-#line 1446 "src/gen/po.tab.c"
+#line 1457 "src/gen/po.tab.c"
     break;
 
   case 20: /* statement_assign: IDENTIFIER OP_ASSIGN expression  */
-#line 118 "src/grammar/po.y"
+#line 122 "src/grammar/po.y"
                                       { (yyval.stmt) = statement_create_assign(identifier_create((yyvsp[-2].str_)), (yyvsp[0].expr)); }
-#line 1452 "src/gen/po.tab.c"
+#line 1463 "src/gen/po.tab.c"
     break;
 
   case 21: /* statement_if: IF L_PAREN expression R_PAREN block  */
-#line 122 "src/grammar/po.y"
+#line 126 "src/grammar/po.y"
                                                      { (yyval.stmt) = statement_create_if((yyvsp[-2].expr), (yyvsp[0].block)); }
-#line 1458 "src/gen/po.tab.c"
+#line 1469 "src/gen/po.tab.c"
     break;
 
   case 22: /* statement_if: IF L_PAREN expression R_PAREN block ELSE block  */
-#line 123 "src/grammar/po.y"
+#line 127 "src/grammar/po.y"
                                                      { (yyval.stmt) = statement_create_if_else((yyvsp[-4].expr), (yyvsp[-2].block), (yyvsp[0].block)); }
-#line 1464 "src/gen/po.tab.c"
+#line 1475 "src/gen/po.tab.c"
     break;
 
   case 23: /* statement_while: WHILE L_PAREN expression R_PAREN block  */
-#line 127 "src/grammar/po.y"
+#line 131 "src/grammar/po.y"
                                              { (yyval.stmt) = statement_create_while((yyvsp[-2].expr), (yyvsp[0].block)); }
-#line 1470 "src/gen/po.tab.c"
+#line 1481 "src/gen/po.tab.c"
     break;
 
-  case 25: /* expression: expression OP_EQUALS expression_compared_term  */
-#line 132 "src/grammar/po.y"
+  case 25: /* expression: expression OP_AND expression_logic_term  */
+#line 136 "src/grammar/po.y"
+                                              { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
+#line 1487 "src/gen/po.tab.c"
+    break;
+
+  case 26: /* expression: expression OP_OR expression_logic_term  */
+#line 137 "src/grammar/po.y"
+                                              { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
+#line 1493 "src/gen/po.tab.c"
+    break;
+
+  case 28: /* expression_logic_term: expression_logic_term OP_EQUALS expression_compared_term  */
+#line 142 "src/grammar/po.y"
+                                                                   { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
+#line 1499 "src/gen/po.tab.c"
+    break;
+
+  case 29: /* expression_logic_term: expression_logic_term OP_NOT_EQUALS expression_compared_term  */
+#line 143 "src/grammar/po.y"
+                                                                   { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
+#line 1505 "src/gen/po.tab.c"
+    break;
+
+  case 31: /* expression_compared_term: expression_compared_term OP_PLUS expression_term  */
+#line 148 "src/grammar/po.y"
                                                         { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1476 "src/gen/po.tab.c"
+#line 1511 "src/gen/po.tab.c"
     break;
 
-  case 26: /* expression: expression OP_NOT_EQUALS expression_compared_term  */
-#line 133 "src/grammar/po.y"
-                                                        { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1482 "src/gen/po.tab.c"
-    break;
-
-  case 28: /* expression_compared_term: expression_compared_term OP_PLUS expression_term  */
-#line 138 "src/grammar/po.y"
-                                                        { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1488 "src/gen/po.tab.c"
-    break;
-
-  case 29: /* expression_compared_term: expression_compared_term OP_MINUS expression_term  */
-#line 139 "src/grammar/po.y"
-                                                        { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1494 "src/gen/po.tab.c"
-    break;
-
-  case 31: /* expression_term: expression_term OP_MUL expression_factor  */
-#line 144 "src/grammar/po.y"
-                                               { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1500 "src/gen/po.tab.c"
-    break;
-
-  case 32: /* expression_term: expression_term OP_DIV expression_factor  */
-#line 145 "src/grammar/po.y"
-                                               { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1506 "src/gen/po.tab.c"
-    break;
-
-  case 33: /* expression_factor: LIT_FLOAT  */
+  case 32: /* expression_compared_term: expression_compared_term OP_MINUS expression_term  */
 #line 149 "src/grammar/po.y"
+                                                        { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
+#line 1517 "src/gen/po.tab.c"
+    break;
+
+  case 34: /* expression_term: expression_term OP_MUL expression_factor  */
+#line 154 "src/grammar/po.y"
+                                               { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
+#line 1523 "src/gen/po.tab.c"
+    break;
+
+  case 35: /* expression_term: expression_term OP_DIV expression_factor  */
+#line 155 "src/grammar/po.y"
+                                               { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
+#line 1529 "src/gen/po.tab.c"
+    break;
+
+  case 36: /* expression_factor: LIT_FLOAT  */
+#line 159 "src/grammar/po.y"
                                  { (yyval.expr) = expression_create_literal(literal_create_float((yyvsp[0].float_))); }
-#line 1512 "src/gen/po.tab.c"
+#line 1535 "src/gen/po.tab.c"
     break;
 
-  case 34: /* expression_factor: LIT_INT  */
-#line 150 "src/grammar/po.y"
+  case 37: /* expression_factor: LIT_INT  */
+#line 160 "src/grammar/po.y"
                                  { (yyval.expr) = expression_create_literal(literal_create_int((yyvsp[0].int_))); }
-#line 1518 "src/gen/po.tab.c"
+#line 1541 "src/gen/po.tab.c"
     break;
 
-  case 35: /* expression_factor: IDENTIFIER  */
-#line 151 "src/grammar/po.y"
+  case 38: /* expression_factor: IDENTIFIER  */
+#line 161 "src/grammar/po.y"
                                  { (yyval.expr) = expression_create_identifier(identifier_create((yyvsp[0].str_))); }
-#line 1524 "src/gen/po.tab.c"
+#line 1547 "src/gen/po.tab.c"
     break;
 
-  case 36: /* expression_factor: L_PAREN expression R_PAREN  */
-#line 152 "src/grammar/po.y"
+  case 39: /* expression_factor: OP_NOT expression_factor  */
+#line 162 "src/grammar/po.y"
+                                 { (yyval.expr) = expression_create_unary_op(unary_op_create((yyvsp[-1].una_op_type), (yyvsp[0].expr))); }
+#line 1553 "src/gen/po.tab.c"
+    break;
+
+  case 40: /* expression_factor: L_PAREN expression R_PAREN  */
+#line 163 "src/grammar/po.y"
                                  { (yyval.expr) = (yyvsp[-1].expr); }
-#line 1530 "src/gen/po.tab.c"
+#line 1559 "src/gen/po.tab.c"
     break;
 
-  case 37: /* block: L_BRACE delimiter_optional statement_list R_BRACE  */
-#line 156 "src/grammar/po.y"
+  case 41: /* block: L_BRACE delimiter_optional statement_list R_BRACE  */
+#line 167 "src/grammar/po.y"
                                                         { (yyval.block) = block_create((yyvsp[-1].stmt_list)); }
-#line 1536 "src/gen/po.tab.c"
+#line 1565 "src/gen/po.tab.c"
     break;
 
 
-#line 1540 "src/gen/po.tab.c"
+#line 1569 "src/gen/po.tab.c"
 
       default: break;
     }
@@ -1760,7 +1789,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 158 "src/grammar/po.y"
+#line 169 "src/grammar/po.y"
 
 
 void yyerror(Program **prog, const char *s) {

@@ -9,6 +9,8 @@ struct BinaryOp;
 typedef struct BinaryOp BinaryOp;
 
 enum BinaryOpType {
+    BINARY_OP_AND,
+    BINARY_OP_OR,
     BINARY_OP_EQUALS,
     BINARY_OP_NOT_EQUALS,
     BINARY_OP_PLUS,

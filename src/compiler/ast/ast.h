@@ -8,3 +8,4 @@
 #include "compiler/ast/program.h"
 #include "compiler/ast/statement.h"
 #include "compiler/ast/statement_list.h"
+#include "compiler/ast/unary_op.h"

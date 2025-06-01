@@ -1,10 +1,10 @@
 %{
-#include "gen/po.tab.h"
+    #include "gen/po.tab.h"
 
-#include "compiler/ast/ast.h"
-#include "str.h"
+    #include "compiler/ast/ast.h"
+    #include "str.h"
 
-extern YYSTYPE yylval;
+    extern YYSTYPE yylval;
 %}
 
 %%
@@ -25,9 +25,13 @@ extern YYSTYPE yylval;
 "-"  { yylval.bin_op_type = BINARY_OP_MINUS; return OP_MINUS; }
 "*"  { yylval.bin_op_type = BINARY_OP_MUL; return OP_MUL; }
 "/"  { yylval.bin_op_type = BINARY_OP_DIV; return OP_DIV; }
+"&&"  { yylval.bin_op_type = BINARY_OP_AND; return OP_AND; }
+"||"  { yylval.bin_op_type = BINARY_OP_OR; return OP_OR; }
 
 "==" { yylval.bin_op_type = BINARY_OP_EQUALS; return OP_EQUALS; }
 "!=" { yylval.bin_op_type = BINARY_OP_NOT_EQUALS; return OP_NOT_EQUALS; }
+
+"!" { yylval.una_op_type = UNARY_OP_NOT; return OP_NOT; }
 
 [+-]?[1-9][0-9]*|0          { yylval.int_ = atoi(yytext); return LIT_INT; }
 [+-]?([1-9][0-9]*[.])[0-9]+ { yylval.float_ = atof(yytext); return LIT_FLOAT; }

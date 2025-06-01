@@ -38,22 +38,22 @@ void literal_destroy(Literal *lit) {
 
 static inline char *literal_type_to_str(Literal *literal) {
     switch (literal->type) {
-        case LITERAL_FLOAT:
-            return "float";
-        case LITERAL_INT:
-            return "int";
+    case LITERAL_FLOAT:
+        return "float";
+    case LITERAL_INT:
+        return "int";
     }
     return "unknown";
 }
 
 static inline char *literal_print_value(Literal *literal) {
     switch (literal->type) {
-        case LITERAL_FLOAT:
-            printf("%llf", literal->float_);
-            break;
-        case LITERAL_INT:
-            printf("%lld", literal->int_);
-            break;
+    case LITERAL_FLOAT:
+        printf("%llf", literal->float_);
+        break;
+    case LITERAL_INT:
+        printf("%lld", literal->int_);
+        break;
     }
     return "unknown";
 }

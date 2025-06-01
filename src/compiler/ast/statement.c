@@ -105,42 +105,42 @@ Statement *statement_create_block(Block *block) {
 
 void statement_destroy(Statement *stmt) {
     switch (stmt->type) {
-        case STATEMENT_NEW_VARIABLE:
-            identifier_destroy(stmt->new_variable.ident);
-            expression_destroy(stmt->new_variable.expr);
-            break;
-        case STATEMENT_ASSIGN:
-            identifier_destroy(stmt->assign.ident);
-            expression_destroy(stmt->assign.expr);
-            break;
-        case STATEMENT_IF:
-            expression_destroy(stmt->if_.cond);
-            block_destroy(stmt->if_.if_block);
-            block_destroy(stmt->if_.else_block);
-            break;
-        case STATEMENT_WHILE:
-            expression_destroy(stmt->while_.cond);
-            block_destroy(stmt->while_.block);
-            break;
-        case STATEMENT_BLOCK:
-            block_destroy(stmt->block.block);
-            break;
+    case STATEMENT_NEW_VARIABLE:
+        identifier_destroy(stmt->new_variable.ident);
+        expression_destroy(stmt->new_variable.expr);
+        break;
+    case STATEMENT_ASSIGN:
+        identifier_destroy(stmt->assign.ident);
+        expression_destroy(stmt->assign.expr);
+        break;
+    case STATEMENT_IF:
+        expression_destroy(stmt->if_.cond);
+        block_destroy(stmt->if_.if_block);
+        block_destroy(stmt->if_.else_block);
+        break;
+    case STATEMENT_WHILE:
+        expression_destroy(stmt->while_.cond);
+        block_destroy(stmt->while_.block);
+        break;
+    case STATEMENT_BLOCK:
+        block_destroy(stmt->block.block);
+        break;
     };
     free(stmt);
 }
 
 static inline char *statement_get_type_str(Statement *statement) {
     switch (statement->type) {
-        case STATEMENT_NEW_VARIABLE:
-            return "new_variable";
-        case STATEMENT_ASSIGN:
-            return "assign";
-        case STATEMENT_IF:
-            return "if";
-        case STATEMENT_WHILE:
-            return "while";
-        case STATEMENT_BLOCK:
-            return "block";
+    case STATEMENT_NEW_VARIABLE:
+        return "new_variable";
+    case STATEMENT_ASSIGN:
+        return "assign";
+    case STATEMENT_IF:
+        return "if";
+    case STATEMENT_WHILE:
+        return "while";
+    case STATEMENT_BLOCK:
+        return "block";
     };
     return "unknown";
 }
@@ -150,45 +150,45 @@ void statement_print(Statement *statement, size_t padding) {
     printf("Statement[type=%s]\n", statement_get_type_str(statement));
 
     switch (statement->type) {
-        case STATEMENT_NEW_VARIABLE:
-            print_padding(padding + 1);
-            puts("ident:");
-            identifier_print(statement->new_variable.ident, padding + 2);
-            print_padding(padding + 1);
-            puts("expr:");
-            expression_print(statement->new_variable.expr, padding + 2);
-            break;
-        case STATEMENT_ASSIGN:
-            print_padding(padding + 1);
-            puts("ident:");
-            identifier_print(statement->assign.ident, padding + 2);
-            print_padding(padding + 1);
-            puts("expr:");
-            expression_print(statement->assign.expr, padding + 2);
-            break;
-        case STATEMENT_IF:
-            print_padding(padding + 1);
-            puts("cond:");
-            expression_print(statement->if_.cond, padding + 2);
-            print_padding(padding + 1);
-            puts("if_block:");
-            block_print(statement->if_.if_block, padding + 2);
-            print_padding(padding + 1);
-            puts("else_block:");
-            block_print(statement->if_.else_block, padding + 2);
-            break;
-        case STATEMENT_WHILE:
-            print_padding(padding + 1);
-            puts("cond:");
-            expression_print(statement->while_.cond, padding + 2);
-            print_padding(padding + 1);
-            puts("block:");
-            block_print(statement->while_.block, padding + 2);
-            break;
-        case STATEMENT_BLOCK:
-            print_padding(padding + 1);
-            puts("block:");
-            block_print(statement->while_.block, padding + 2);
-            break;
+    case STATEMENT_NEW_VARIABLE:
+        print_padding(padding + 1);
+        puts("ident:");
+        identifier_print(statement->new_variable.ident, padding + 2);
+        print_padding(padding + 1);
+        puts("expr:");
+        expression_print(statement->new_variable.expr, padding + 2);
+        break;
+    case STATEMENT_ASSIGN:
+        print_padding(padding + 1);
+        puts("ident:");
+        identifier_print(statement->assign.ident, padding + 2);
+        print_padding(padding + 1);
+        puts("expr:");
+        expression_print(statement->assign.expr, padding + 2);
+        break;
+    case STATEMENT_IF:
+        print_padding(padding + 1);
+        puts("cond:");
+        expression_print(statement->if_.cond, padding + 2);
+        print_padding(padding + 1);
+        puts("if_block:");
+        block_print(statement->if_.if_block, padding + 2);
+        print_padding(padding + 1);
+        puts("else_block:");
+        block_print(statement->if_.else_block, padding + 2);
+        break;
+    case STATEMENT_WHILE:
+        print_padding(padding + 1);
+        puts("cond:");
+        expression_print(statement->while_.cond, padding + 2);
+        print_padding(padding + 1);
+        puts("block:");
+        block_print(statement->while_.block, padding + 2);
+        break;
+    case STATEMENT_BLOCK:
+        print_padding(padding + 1);
+        puts("block:");
+        block_print(statement->while_.block, padding + 2);
+        break;
     };
 }

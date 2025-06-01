@@ -74,12 +74,15 @@ extern int yydebug;
     OP_MINUS = 269,                /* OP_MINUS  */
     OP_MUL = 270,                  /* OP_MUL  */
     OP_DIV = 271,                  /* OP_DIV  */
-    OP_EQUALS = 272,               /* OP_EQUALS  */
-    OP_NOT_EQUALS = 273,           /* OP_NOT_EQUALS  */
-    LIT_INT = 274,                 /* LIT_INT  */
-    LIT_FLOAT = 275,               /* LIT_FLOAT  */
-    IDENTIFIER = 276,              /* IDENTIFIER  */
-    EOL = 277                      /* EOL  */
+    OP_AND = 272,                  /* OP_AND  */
+    OP_OR = 273,                   /* OP_OR  */
+    OP_EQUALS = 274,               /* OP_EQUALS  */
+    OP_NOT_EQUALS = 275,           /* OP_NOT_EQUALS  */
+    OP_NOT = 276,                  /* OP_NOT  */
+    LIT_INT = 277,                 /* LIT_INT  */
+    LIT_FLOAT = 278,               /* LIT_FLOAT  */
+    IDENTIFIER = 279,              /* IDENTIFIER  */
+    EOL = 280                      /* EOL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -90,6 +93,7 @@ union YYSTYPE
 {
 #line 29 "src/grammar/po.y"
 
+    UnaryOpType una_op_type;
     BinaryOpType bin_op_type;
     Expression *expr;
     Program *program;
@@ -101,7 +105,7 @@ union YYSTYPE
     signed long long int_;
     char *str_;
 
-#line 105 "src/gen/po.tab.h"
+#line 109 "src/gen/po.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
