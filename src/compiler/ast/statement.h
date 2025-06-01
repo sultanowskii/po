@@ -1,8 +1,9 @@
 #pragma once
 
-#include "compiler/ast/expression.h"
-#include "compiler/ast/identifier.h"
-#include "compiler/ast/statement_list.h"
+// Forward declarations
+typedef struct Identifier    Identifier;
+typedef struct Expression    Expression;
+typedef struct StatementList StatementList;
 
 struct Statement;
 typedef struct Statement Statement;
@@ -17,7 +18,7 @@ typedef enum StatementType StatementType;
 
 Statement *statement_create_new_variable(Identifier *identifier, Expression *expression);
 Statement *statement_create_assign(Identifier *identifier, Expression *expression);
-Statement *statement_create_if(Expression *cond_expression, StatementList *if_block);
-Statement *statement_create_if_else(Expression *cond_expression, StatementList *if_block, StatementList *else_block);
-Statement *statement_create_while(Expression *cond_expression, StatementList *block);
-void       statement_destroy(Statement *statement);
+Statement *statement_create_if(Expression *cond, StatementList *if_block);
+Statement *statement_create_if_else(Expression *cond, StatementList *if_block, StatementList *else_block);
+Statement *statement_create_while(Expression *cond, StatementList *block);
+void       statement_destroy(Statement *stmt);
