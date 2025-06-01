@@ -34,7 +34,6 @@
 "!" { yylval.una_op_type = UNARY_OP_NOT; return OP_NOT; }
 
 [+-]?[1-9][0-9]*|0          { yylval.int_ = atoi(yytext); return LIT_INT; }
-[+-]?([1-9][0-9]*[.])[0-9]+ { yylval.float_ = atof(yytext); return LIT_FLOAT; }
 
 [a-zA-Z_][a-zA-Z0-9_]* { yylval.str_ = strdup(yytext); return IDENTIFIER; }
 

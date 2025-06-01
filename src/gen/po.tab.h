@@ -80,9 +80,8 @@ extern int yydebug;
     OP_NOT_EQUALS = 275,           /* OP_NOT_EQUALS  */
     OP_NOT = 276,                  /* OP_NOT  */
     LIT_INT = 277,                 /* LIT_INT  */
-    LIT_FLOAT = 278,               /* LIT_FLOAT  */
-    IDENTIFIER = 279,              /* IDENTIFIER  */
-    EOL = 280                      /* EOL  */
+    IDENTIFIER = 278,              /* IDENTIFIER  */
+    EOL = 279                      /* EOL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -101,11 +100,10 @@ union YYSTYPE
     Statement *stmt;
     Block *block;
 
-    double float_;
     signed long long int_;
     char *str_;
 
-#line 109 "src/gen/po.tab.h"
+#line 107 "src/gen/po.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -14,15 +14,6 @@ struct Literal {
 };
 typedef struct Literal Literal;
 
-Literal *literal_create_float(double value) {
-    Literal *lit = malloc(sizeof(Literal));
-    *lit = (Literal){
-        .type = LITERAL_FLOAT,
-        .float_ = value,
-    };
-    return lit;
-}
-
 Literal *literal_create_int(signed long long value) {
     Literal *lit = malloc(sizeof(Literal));
     *lit = (Literal){
@@ -38,8 +29,6 @@ void literal_destroy(Literal *lit) {
 
 static inline char *literal_type_to_str(Literal *literal) {
     switch (literal->type) {
-    case LITERAL_FLOAT:
-        return "float";
     case LITERAL_INT:
         return "int";
     }
@@ -48,9 +37,6 @@ static inline char *literal_type_to_str(Literal *literal) {
 
 static inline char *literal_print_value(Literal *literal) {
     switch (literal->type) {
-    case LITERAL_FLOAT:
-        printf("%llf", literal->float_);
-        break;
     case LITERAL_INT:
         printf("%lld", literal->int_);
         break;

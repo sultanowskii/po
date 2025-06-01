@@ -35,7 +35,6 @@
     Statement *stmt;
     Block *block;
 
-    double float_;
     signed long long int_;
     char *str_;
 }
@@ -66,7 +65,6 @@
 %token <una_op_type> OP_NOT
 
 %token <int_> LIT_INT
-%token <float_> LIT_FLOAT
 
 %token <str_> IDENTIFIER
 
@@ -156,8 +154,7 @@ expression_term
     ;
 
 expression_factor
-    : LIT_FLOAT                  { $$ = expression_create_literal(literal_create_float($1)); }
-    | LIT_INT                    { $$ = expression_create_literal(literal_create_int($1)); }
+    : LIT_INT                    { $$ = expression_create_literal(literal_create_int($1)); }
     | IDENTIFIER                 { $$ = expression_create_identifier(identifier_create($1)); }
     | OP_NOT expression_factor   { $$ = expression_create_unary_op(unary_op_create($1, $2)); }
     | L_PAREN expression R_PAREN { $$ = $2; }
