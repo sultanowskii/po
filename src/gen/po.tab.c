@@ -77,7 +77,7 @@
     extern int yylex();
     extern FILE *yyin;
 
-    void yyerror(Program **prog, const char *s);
+    void yyerror(IDProvider *idp, Program **prog, const char *s);
 
     int yydebug = 1;
     #define YYDEBUG 1
@@ -144,7 +144,7 @@ enum yysymbol_kind_t
   YYSYMBOL_statement = 31,                 /* statement  */
   YYSYMBOL_statement_new_variable = 32,    /* statement_new_variable  */
   YYSYMBOL_statement_assign = 33,          /* statement_assign  */
-  YYSYMBOL_statement_if = 34,              /* statement_if  */
+  YYSYMBOL_statement_cond = 34,            /* statement_cond  */
   YYSYMBOL_statement_while = 35,           /* statement_while  */
   YYSYMBOL_expression = 36,                /* expression  */
   YYSYMBOL_expression_logic_term = 37,     /* expression_logic_term  */
@@ -565,7 +565,7 @@ static const char *const yytname[] =
   "OP_OR", "OP_EQUALS", "OP_NOT_EQUALS", "OP_NOT", "LIT_INT", "IDENTIFIER",
   "EOL", "$accept", "prog", "statement_list", "non_empty_statement_list",
   "delimiter", "delimiter_optional", "statement", "statement_new_variable",
-  "statement_assign", "statement_if", "statement_while", "expression",
+  "statement_assign", "statement_cond", "statement_while", "expression",
   "expression_logic_term", "expression_compared_term", "expression_term",
   "expression_factor", "block", YY_NULLPTR
 };
@@ -712,7 +712,7 @@ enum { YYENOMEM = -2 };
       }                                                           \
     else                                                          \
       {                                                           \
-        yyerror (program, YY_("syntax error: cannot back up")); \
+        yyerror (idp, program, YY_("syntax error: cannot back up")); \
         YYERROR;                                                  \
       }                                                           \
   while (0)
@@ -745,7 +745,7 @@ do {                                                                      \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
       yy_symbol_print (stderr,                                            \
-                  Kind, Value, program); \
+                  Kind, Value, idp, program); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
 } while (0)
@@ -757,10 +757,11 @@ do {                                                                      \
 
 static void
 yy_symbol_value_print (FILE *yyo,
-                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, Program **program)
+                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, IDProvider *idp, Program **program)
 {
   FILE *yyoutput = yyo;
   YY_USE (yyoutput);
+  YY_USE (idp);
   YY_USE (program);
   if (!yyvaluep)
     return;
@@ -776,12 +777,12 @@ yy_symbol_value_print (FILE *yyo,
 
 static void
 yy_symbol_print (FILE *yyo,
-                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, Program **program)
+                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, IDProvider *idp, Program **program)
 {
   YYFPRINTF (yyo, "%s %s (",
              yykind < YYNTOKENS ? "token" : "nterm", yysymbol_name (yykind));
 
-  yy_symbol_value_print (yyo, yykind, yyvaluep, program);
+  yy_symbol_value_print (yyo, yykind, yyvaluep, idp, program);
   YYFPRINTF (yyo, ")");
 }
 
@@ -815,7 +816,7 @@ do {                                                            \
 
 static void
 yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
-                 int yyrule, Program **program)
+                 int yyrule, IDProvider *idp, Program **program)
 {
   int yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
@@ -828,7 +829,7 @@ yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr,
                        YY_ACCESSING_SYMBOL (+yyssp[yyi + 1 - yynrhs]),
-                       &yyvsp[(yyi + 1) - (yynrhs)], program);
+                       &yyvsp[(yyi + 1) - (yynrhs)], idp, program);
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -836,7 +837,7 @@ yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
 # define YY_REDUCE_PRINT(Rule)          \
 do {                                    \
   if (yydebug)                          \
-    yy_reduce_print (yyssp, yyvsp, Rule, program); \
+    yy_reduce_print (yyssp, yyvsp, Rule, idp, program); \
 } while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -1144,9 +1145,10 @@ yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
 
 static void
 yydestruct (const char *yymsg,
-            yysymbol_kind_t yykind, YYSTYPE *yyvaluep, Program **program)
+            yysymbol_kind_t yykind, YYSTYPE *yyvaluep, IDProvider *idp, Program **program)
 {
   YY_USE (yyvaluep);
+  YY_USE (idp);
   YY_USE (program);
   if (!yymsg)
     yymsg = "Deleting";
@@ -1174,7 +1176,7 @@ int yynerrs;
 `----------*/
 
 int
-yyparse (Program **program)
+yyparse (IDProvider *idp, Program **program)
 {
     yy_state_fast_t yystate = 0;
     /* Number of tokens to shift before error messages enabled.  */
@@ -1420,144 +1422,144 @@ yyreduce:
     {
   case 2: /* prog: delimiter_optional statement_list $end  */
 #line 82 "src/grammar/po.y"
-                                              { *program = program_create((yyvsp[-1].stmt_list)); }
-#line 1425 "src/gen/po.tab.c"
+                                              { *program = program_create(idp, (yyvsp[-1].stmt_list)); }
+#line 1427 "src/gen/po.tab.c"
     break;
 
   case 3: /* statement_list: %empty  */
 #line 86 "src/grammar/po.y"
                                          { (yyval.stmt_list) = statement_list_create(); }
-#line 1431 "src/gen/po.tab.c"
+#line 1433 "src/gen/po.tab.c"
     break;
 
   case 6: /* non_empty_statement_list: statement  */
 #line 92 "src/grammar/po.y"
                                                    { (yyval.stmt_list) = statement_list_create(); statement_list_add_statement((yyval.stmt_list), (yyvsp[0].stmt)); }
-#line 1437 "src/gen/po.tab.c"
+#line 1439 "src/gen/po.tab.c"
     break;
 
   case 7: /* non_empty_statement_list: non_empty_statement_list delimiter statement  */
 #line 93 "src/grammar/po.y"
                                                    { statement_list_add_statement((yyvsp[-2].stmt_list), (yyvsp[0].stmt)); }
-#line 1443 "src/gen/po.tab.c"
+#line 1445 "src/gen/po.tab.c"
     break;
 
   case 18: /* statement: block  */
 #line 113 "src/grammar/po.y"
                              { (yyval.stmt) = statement_create_block((yyvsp[0].block)); }
-#line 1449 "src/gen/po.tab.c"
+#line 1451 "src/gen/po.tab.c"
     break;
 
   case 19: /* statement_new_variable: IDENTIFIER OP_WALRUS expression  */
 #line 117 "src/grammar/po.y"
                                       { (yyval.stmt) = statement_create_new_variable(identifier_create((yyvsp[-2].str_)), (yyvsp[0].expr)); }
-#line 1455 "src/gen/po.tab.c"
+#line 1457 "src/gen/po.tab.c"
     break;
 
   case 20: /* statement_assign: IDENTIFIER OP_ASSIGN expression  */
 #line 121 "src/grammar/po.y"
                                       { (yyval.stmt) = statement_create_assign(identifier_create((yyvsp[-2].str_)), (yyvsp[0].expr)); }
-#line 1461 "src/gen/po.tab.c"
+#line 1463 "src/gen/po.tab.c"
     break;
 
-  case 21: /* statement_if: IF L_PAREN expression R_PAREN block  */
+  case 21: /* statement_cond: IF L_PAREN expression R_PAREN block  */
 #line 125 "src/grammar/po.y"
                                                      { (yyval.stmt) = statement_create_if((yyvsp[-2].expr), (yyvsp[0].block)); }
-#line 1467 "src/gen/po.tab.c"
+#line 1469 "src/gen/po.tab.c"
     break;
 
-  case 22: /* statement_if: IF L_PAREN expression R_PAREN block ELSE block  */
+  case 22: /* statement_cond: IF L_PAREN expression R_PAREN block ELSE block  */
 #line 126 "src/grammar/po.y"
                                                      { (yyval.stmt) = statement_create_if_else((yyvsp[-4].expr), (yyvsp[-2].block), (yyvsp[0].block)); }
-#line 1473 "src/gen/po.tab.c"
+#line 1475 "src/gen/po.tab.c"
     break;
 
   case 23: /* statement_while: WHILE L_PAREN expression R_PAREN block  */
 #line 130 "src/grammar/po.y"
                                              { (yyval.stmt) = statement_create_while((yyvsp[-2].expr), (yyvsp[0].block)); }
-#line 1479 "src/gen/po.tab.c"
+#line 1481 "src/gen/po.tab.c"
     break;
 
   case 25: /* expression: expression OP_AND expression_logic_term  */
 #line 135 "src/grammar/po.y"
                                               { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1485 "src/gen/po.tab.c"
+#line 1487 "src/gen/po.tab.c"
     break;
 
   case 26: /* expression: expression OP_OR expression_logic_term  */
 #line 136 "src/grammar/po.y"
                                               { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1491 "src/gen/po.tab.c"
+#line 1493 "src/gen/po.tab.c"
     break;
 
   case 28: /* expression_logic_term: expression_logic_term OP_EQUALS expression_compared_term  */
 #line 141 "src/grammar/po.y"
                                                                    { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1497 "src/gen/po.tab.c"
+#line 1499 "src/gen/po.tab.c"
     break;
 
   case 29: /* expression_logic_term: expression_logic_term OP_NOT_EQUALS expression_compared_term  */
 #line 142 "src/grammar/po.y"
                                                                    { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1503 "src/gen/po.tab.c"
+#line 1505 "src/gen/po.tab.c"
     break;
 
   case 31: /* expression_compared_term: expression_compared_term OP_PLUS expression_term  */
 #line 147 "src/grammar/po.y"
                                                         { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1509 "src/gen/po.tab.c"
+#line 1511 "src/gen/po.tab.c"
     break;
 
   case 32: /* expression_compared_term: expression_compared_term OP_MINUS expression_term  */
 #line 148 "src/grammar/po.y"
                                                         { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1515 "src/gen/po.tab.c"
+#line 1517 "src/gen/po.tab.c"
     break;
 
   case 34: /* expression_term: expression_term OP_MUL expression_factor  */
 #line 153 "src/grammar/po.y"
                                                { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1521 "src/gen/po.tab.c"
+#line 1523 "src/gen/po.tab.c"
     break;
 
   case 35: /* expression_term: expression_term OP_DIV expression_factor  */
 #line 154 "src/grammar/po.y"
                                                { (yyval.expr) = expression_create_binary_op(binary_op_create((yyvsp[-1].bin_op_type), (yyvsp[-2].expr), (yyvsp[0].expr))); }
-#line 1527 "src/gen/po.tab.c"
+#line 1529 "src/gen/po.tab.c"
     break;
 
   case 36: /* expression_factor: LIT_INT  */
 #line 158 "src/grammar/po.y"
                                  { (yyval.expr) = expression_create_literal(literal_create_int((yyvsp[0].int_))); }
-#line 1533 "src/gen/po.tab.c"
+#line 1535 "src/gen/po.tab.c"
     break;
 
   case 37: /* expression_factor: IDENTIFIER  */
 #line 159 "src/grammar/po.y"
                                  { (yyval.expr) = expression_create_identifier(identifier_create((yyvsp[0].str_))); }
-#line 1539 "src/gen/po.tab.c"
+#line 1541 "src/gen/po.tab.c"
     break;
 
   case 38: /* expression_factor: OP_NOT expression_factor  */
 #line 160 "src/grammar/po.y"
                                  { (yyval.expr) = expression_create_unary_op(unary_op_create((yyvsp[-1].una_op_type), (yyvsp[0].expr))); }
-#line 1545 "src/gen/po.tab.c"
+#line 1547 "src/gen/po.tab.c"
     break;
 
   case 39: /* expression_factor: L_PAREN expression R_PAREN  */
 #line 161 "src/grammar/po.y"
                                  { (yyval.expr) = (yyvsp[-1].expr); }
-#line 1551 "src/gen/po.tab.c"
+#line 1553 "src/gen/po.tab.c"
     break;
 
   case 40: /* block: L_BRACE delimiter_optional statement_list R_BRACE  */
 #line 165 "src/grammar/po.y"
-                                                        { (yyval.block) = block_create((yyvsp[-1].stmt_list)); }
-#line 1557 "src/gen/po.tab.c"
+                                                        { (yyval.block) = block_create(idp, (yyvsp[-1].stmt_list)); }
+#line 1559 "src/gen/po.tab.c"
     break;
 
 
-#line 1561 "src/gen/po.tab.c"
+#line 1563 "src/gen/po.tab.c"
 
       default: break;
     }
@@ -1631,7 +1633,7 @@ yyerrlab:
                 yysyntax_error_status = YYENOMEM;
               }
           }
-        yyerror (program, yymsgp);
+        yyerror (idp, program, yymsgp);
         if (yysyntax_error_status == YYENOMEM)
           YYNOMEM;
       }
@@ -1651,7 +1653,7 @@ yyerrlab:
       else
         {
           yydestruct ("Error: discarding",
-                      yytoken, &yylval, program);
+                      yytoken, &yylval, idp, program);
           yychar = YYEMPTY;
         }
     }
@@ -1707,7 +1709,7 @@ yyerrlab1:
 
 
       yydestruct ("Error: popping",
-                  YY_ACCESSING_SYMBOL (yystate), yyvsp, program);
+                  YY_ACCESSING_SYMBOL (yystate), yyvsp, idp, program);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1745,7 +1747,7 @@ yyabortlab:
 | yyexhaustedlab -- YYNOMEM (memory exhaustion) comes here.  |
 `-----------------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (program, YY_("memory exhausted"));
+  yyerror (idp, program, YY_("memory exhausted"));
   yyresult = 2;
   goto yyreturnlab;
 
@@ -1760,7 +1762,7 @@ yyreturnlab:
          user semantic actions for why this is necessary.  */
       yytoken = YYTRANSLATE (yychar);
       yydestruct ("Cleanup: discarding lookahead",
-                  yytoken, &yylval, program);
+                  yytoken, &yylval, idp, program);
     }
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
@@ -1769,7 +1771,7 @@ yyreturnlab:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp, program);
+                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp, idp, program);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -1784,6 +1786,6 @@ yyreturnlab:
 #line 167 "src/grammar/po.y"
 
 
-void yyerror(Program **prog, const char *s) {
+void yyerror(IDProvider *idp, Program **prog, const char *s) {
     fprintf(stderr, "error: %s\n", s);
 }

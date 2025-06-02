@@ -1,7 +1,12 @@
 #pragma once
 
-#include <stddef.h>
 #include <inttypes.h>
+#include <stddef.h>
+
+enum LiteralType {
+    LITERAL_INT,
+};
+typedef enum LiteralType LiteralType;
 
 struct Literal {
     LiteralType type;
@@ -10,11 +15,6 @@ struct Literal {
     };
 };
 typedef struct Literal Literal;
-
-enum LiteralType {
-    LITERAL_INT,
-};
-typedef enum LiteralType LiteralType;
 
 Literal *literal_create_int(int32_t value);
 void     literal_print(Literal *literal, size_t depth);

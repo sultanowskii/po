@@ -38,14 +38,22 @@ Statement *statement_create_assign(Identifier *identifier, Expression *expressio
 }
 
 Statement *statement_create_if(Expression *cond, Block *if_block) {
-    return statement_create_if_else(cond, if_block, block_create(statement_list_create()));
+    Statement *stmt = statement_create_empty();
+    *stmt = (Statement){
+        .type = STATEMENT_IF,
+        .if_else = {
+            .cond = cond,
+            .if_block = if_block,
+        },
+    };
+    return stmt;
 }
 
 Statement *statement_create_if_else(Expression *cond, Block *if_block, Block *else_block) {
     Statement *stmt = statement_create_empty();
     *stmt = (Statement){
-        .type = STATEMENT_IF,
-        .if_ = {
+        .type = STATEMENT_IF_ELSE,
+        .if_else = {
             .cond = cond,
             .if_block = if_block,
             .else_block = else_block,
@@ -90,7 +98,11 @@ void statement_destroy(Statement *stmt) {
     case STATEMENT_IF:
         expression_destroy(stmt->if_.cond);
         block_destroy(stmt->if_.if_block);
-        block_destroy(stmt->if_.else_block);
+        break;
+    case STATEMENT_IF_ELSE:
+        expression_destroy(stmt->if_else.cond);
+        block_destroy(stmt->if_else.if_block);
+        block_destroy(stmt->if_else.else_block);
         break;
     case STATEMENT_WHILE:
         expression_destroy(stmt->while_.cond);
@@ -147,9 +159,17 @@ void statement_print(Statement *statement, size_t padding) {
         print_padding(padding + 1);
         puts("if_block:");
         block_print(statement->if_.if_block, padding + 2);
+        break;
+    case STATEMENT_IF_ELSE:
+        print_padding(padding + 1);
+        puts("cond:");
+        expression_print(statement->if_else.cond, padding + 2);
+        print_padding(padding + 1);
+        puts("if_block:");
+        block_print(statement->if_else.if_block, padding + 2);
         print_padding(padding + 1);
         puts("else_block:");
-        block_print(statement->if_.else_block, padding + 2);
+        block_print(statement->if_else.else_block, padding + 2);
         break;
     case STATEMENT_WHILE:
         print_padding(padding + 1);

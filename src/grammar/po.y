@@ -8,7 +8,7 @@
     extern int yylex();
     extern FILE *yyin;
 
-    void yyerror(Program **prog, const char *s);
+    void yyerror(IDProvider *idp, Program **prog, const char *s);
 
     int yydebug = 1;
     #define YYDEBUG 1
@@ -24,7 +24,7 @@
 %define parse.error verbose
 
 // Add yyparse() param - the program itself.
-%parse-param {Program **program}
+%parse-param {IDProvider *idp} {Program **program}
 
 // YYSTYPE definition. Is used in Lexer (yylval) and here
 %union {
@@ -73,13 +73,13 @@
 
 // Types of non-terminal tokens.
 %type <expr> expression expression_logic_term expression_compared_term expression_term expression_factor
-%type <stmt> statement statement_new_variable statement_assign statement_if statement_while
+%type <stmt> statement statement_new_variable statement_assign statement_cond statement_while
 %type <stmt_list> statement_list non_empty_statement_list
 %type <block> block
 
 %%
 prog
-    : delimiter_optional statement_list YYEOF { *program = program_create($2); }
+    : delimiter_optional statement_list YYEOF { *program = program_create(idp, $2); }
     ;
 
 statement_list
@@ -108,7 +108,7 @@ delimiter_optional
 statement
     : statement_new_variable
     | statement_assign
-    | statement_if
+    | statement_cond
     | statement_while
     | block                  { $$ = statement_create_block($1); }
     ;
@@ -121,7 +121,7 @@ statement_assign
     : IDENTIFIER OP_ASSIGN expression { $$ = statement_create_assign(identifier_create($1), $3); }
     ;
 
-statement_if
+statement_cond
     : IF L_PAREN expression R_PAREN block            { $$ = statement_create_if($3, $5); }
     | IF L_PAREN expression R_PAREN block ELSE block { $$ = statement_create_if_else($3, $5, $7); }
     ;
@@ -162,10 +162,10 @@ expression_factor
     ;
 
 block
-    : L_BRACE delimiter_optional statement_list R_BRACE { $$ = block_create($3); }
+    : L_BRACE delimiter_optional statement_list R_BRACE { $$ = block_create(idp, $3); }
     ;
 %%
 
-void yyerror(Program **prog, const char *s) {
+void yyerror(IDProvider *idp, Program **prog, const char *s) {
     fprintf(stderr, "error: %s\n", s);
 }

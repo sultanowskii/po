@@ -5,13 +5,6 @@
 // Forward declarations
 typedef struct Expression Expression;
 
-struct BinaryOp {
-    BinaryOpType op;
-    Expression  *left;
-    Expression  *right;
-};
-typedef struct BinaryOp BinaryOp;
-
 enum BinaryOpType {
     BINARY_OP_AND,
     BINARY_OP_OR,
@@ -23,6 +16,13 @@ enum BinaryOpType {
     BINARY_OP_DIV,
 };
 typedef enum BinaryOpType BinaryOpType;
+
+struct BinaryOp {
+    BinaryOpType op;
+    Expression  *left;
+    Expression  *right;
+};
+typedef struct BinaryOp BinaryOp;
 
 BinaryOp *binary_op_create(BinaryOpType op_type, Expression *left, Expression *right);
 void      binary_op_print(BinaryOp *bin_op, size_t padding);

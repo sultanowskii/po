@@ -115,7 +115,7 @@ typedef union YYSTYPE YYSTYPE;
 extern YYSTYPE yylval;
 
 
-int yyparse (Program **program);
+int yyparse (IDProvider *idp, Program **program);
 
 
 #endif /* !YY_YY_SRC_GEN_PO_TAB_H_INCLUDED  */

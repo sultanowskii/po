@@ -8,6 +8,14 @@ typedef struct BinaryOp   BinaryOp;
 typedef struct Literal    Literal;
 typedef struct Identifier Identifier;
 
+enum ExpressionType {
+    EXPRESSION_UNARY_OP,
+    EXPRESSION_BINARY_OP,
+    EXPRESSION_LITERAL,
+    EXPRESSION_IDENTIFIER,
+};
+typedef enum ExpressionType ExpressionType;
+
 struct Expression {
     ExpressionType type;
     union {
@@ -18,14 +26,6 @@ struct Expression {
     };
 };
 typedef struct Expression Expression;
-
-enum ExpressionType {
-    EXPRESSION_UNARY_OP,
-    EXPRESSION_BINARY_OP,
-    EXPRESSION_LITERAL,
-    EXPRESSION_IDENTIFIER,
-};
-typedef enum ExpressionType ExpressionType;
 
 Expression *expression_create_literal(Literal *literal);
 Expression *expression_create_identifier(Identifier *identifier);

@@ -7,6 +7,16 @@ typedef struct Identifier Identifier;
 typedef struct Expression Expression;
 typedef struct Block      Block;
 
+enum StatementType {
+    STATEMENT_NEW_VARIABLE,
+    STATEMENT_ASSIGN,
+    STATEMENT_IF,
+    STATEMENT_IF_ELSE,
+    STATEMENT_WHILE,
+    STATEMENT_BLOCK,
+};
+typedef enum StatementType StatementType;
+
 struct Statement {
     StatementType type;
     union {
@@ -21,8 +31,12 @@ struct Statement {
         struct {
             Expression *cond;
             Block      *if_block;
-            Block      *else_block;
         } if_;
+        struct {
+            Expression *cond;
+            Block      *if_block;
+            Block      *else_block;
+        } if_else;
         struct {
             Expression *cond;
             Block      *block;
@@ -33,15 +47,6 @@ struct Statement {
     };
 };
 typedef struct Statement Statement;
-
-enum StatementType {
-    STATEMENT_NEW_VARIABLE,
-    STATEMENT_ASSIGN,
-    STATEMENT_IF,
-    STATEMENT_WHILE,
-    STATEMENT_BLOCK,
-};
-typedef enum StatementType StatementType;
 
 Statement *statement_create_new_variable(Identifier *identifier, Expression *expression);
 Statement *statement_create_assign(Identifier *identifier, Expression *expression);
