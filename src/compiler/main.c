@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "compiler/ast/ast.h"
-#include "compiler/ast/id_provider.h"
+#include "compiler/id_provider.h"
 
 extern int yyparse(IDProvider *idp, Program **program);
 

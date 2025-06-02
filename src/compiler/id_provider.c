@@ -1,4 +1,4 @@
-#include "compiler/ast/id_provider.h"
+#include "compiler/id_provider.h"
 
 #include <malloc.h>
 #include <stddef.h>

@@ -2,8 +2,8 @@
 
 #include <stddef.h>
 
-#include "compiler/ast/id_provider.h"
 #include "compiler/ast/statement_list.h"
+#include "compiler/id_provider.h"
 
 struct Program {
     size_t         id;
