@@ -13,8 +13,8 @@ LEXER_DEFINITION := $(GRAMMAR_DIR)/po.l
 LEXER_GEN_SRC    := $(GEN_DIR)/po.yy.c
 LEXER_GEN_SRCS   := $(LEXER_GEN_SRC)
 
-SRCS := $(shell find $(SRC_DIR)/ -type f -name '*.c') $(PARSER_GEN_SRCS) $(LEXER_GEN_SRCS)
-HDRS := $(shell find $(SRC_DIR)/ -type f -name '*.h')
+SRCS := $(shell find $(SRC_DIR)/ -type f -name '*.c') $(PARSER_GEN_SRC) $(LEXER_GEN_SRC)
+HDRS := $(shell find $(SRC_DIR)/ -type f -name '*.h') $(PARSER_GEN_HDR) $(LEXER_GEN_HDR)
 OBJS := $(SRCS:.c=.o)
 
 FILES_TO_LINT := $(shell find $(SRC_DIR)/ -type f -name '*.c' -o -name '*.h' | grep -v "^$(GEN_DIR)/")
