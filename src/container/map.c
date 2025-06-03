@@ -67,7 +67,7 @@ void map_destroy(Map *map) {
     free(map);
 }
 
-void *map_get(Map *map, void *key) {
+void *map_get(const Map *map, void *key) {
     Hash   hash = map->hash_key(key);
     size_t bucket_index = hash % BUCKET_COUNT;
 

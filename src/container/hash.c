@@ -29,7 +29,7 @@ Hash hash_uint32(uint32_t num) {
     return (Hash)num;
 }
 
-Hash hashf_uint32(void *v) {
+Hash hashf_uint32(const void *v) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
     return hash_uint32((uint32_t)v);
