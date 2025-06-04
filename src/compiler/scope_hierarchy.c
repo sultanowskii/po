@@ -1,6 +1,7 @@
-#include "compiler/scopes.h"
+#include "compiler/scope_hierarchy.h"
 
 #include <inttypes.h>
+#include <malloc.h>
 #include <stdio.h>
 
 #include "compile.h"
@@ -13,12 +14,21 @@
 #include "compiler/id_provider.h"
 #include "compiler/scope.h"
 #include "container/map.h"
+#include "container/vec.h"
+#include "fmt.h"
 #include "math.h"
 #include "str.h"
+
+struct ScopeHierarchy {
+    Map *scopes;
+    // Read-only pointer to prog. Must not be freed.
+    const Program *prog;
+};
 
 static int32_t traverse_block(Map *scopes, Block *block, int32_t base_offset, uint32_t parent_id);
 
 static inline void validate_identifier(Map *scopes, Identifier *ident, uint32_t current_scope_id) {
+    printf("validate_identifier(%s, %" PRIu32 ")\n", ident->name, current_scope_id);
     const char *var_name = ident->name;
 
     uint32_t scope_id = current_scope_id;
@@ -38,6 +48,7 @@ static inline void validate_identifier(Map *scopes, Identifier *ident, uint32_t 
 }
 
 static inline void validate_expression(Map *scopes, Expression *expr, uint32_t current_scope_id) {
+    printf("validate_expression(some-expr, %" PRIu32 ")\n", current_scope_id);
     switch (expr->type) {
     case EXPRESSION_UNARY_OP:
         validate_expression(scopes, expr->una_op->expr, current_scope_id);
@@ -50,6 +61,7 @@ static inline void validate_expression(Map *scopes, Expression *expr, uint32_t c
         break;
     case EXPRESSION_IDENTIFIER:
         validate_identifier(scopes, expr->ident, current_scope_id);
+        break;
     }
 }
 
@@ -59,6 +71,7 @@ static inline int32_t calculate_required_stack_size_of_this_scope(
     StatementList *statement_list,
     uint32_t       scope_id
 ) {
+    printf("calculate_required_stack_size_of_this_scope(%" PRIu32 ")\n", scope_id);
     StatementListNode *node = statement_list->head;
     IGNORE_INT_TO_POINTER()
     Scope *scope = map_get_(scopes, scope_id);
@@ -78,6 +91,7 @@ static inline int32_t calculate_required_stack_size_of_this_scope(
             current_offset += 1; // TODO: type size
             break;
         }
+        node = node->next;
     }
 
     return current_offset;
@@ -91,13 +105,14 @@ static inline int32_t calculate_required_stack_size_of_nested_scopes(
     uint32_t       scope_id,
     int32_t        start_offset
 ) {
+    printf("calculate_required_stack_size_of_nested_scopes(%" PRIu32 ")\n", scope_id);
     StatementListNode *node = statement_list->head;
     int32_t            max_stack_size_of_nested_scopes = 0;
     int32_t            nested_scope_size = 0;
     while (node != NULL) {
         switch (node->stmt->type) {
         case STATEMENT_ASSIGN:
-            validate_identifier(scopes, node->stmt->new_variable.ident, scope_id);
+            validate_identifier(scopes, node->stmt->assign.ident, scope_id);
             break;
         case STATEMENT_IF:
             validate_expression(scopes, node->stmt->if_.cond, scope_id);
@@ -138,6 +153,13 @@ static inline int32_t traverse_block(Map *scopes, Block *block, int32_t base_off
     map_set_(scopes, block->id, scope);
     scope->parent_id = parent_id;
 
+    Scope *parent_scope = map_get_(scopes, parent_id);
+    if (parent_scope != NULL) {
+        scope_add_scope(parent_scope, block->id);
+    }
+
+    printf("traverse_block(%" PRIu32 ")\n", block->id);
+
     int32_t current_size = calculate_required_stack_size_of_this_scope(scopes, block->statements, block->id);
     int32_t nested_size = calculate_required_stack_size_of_nested_scopes(
         scopes,
@@ -151,7 +173,7 @@ static inline int32_t traverse_block(Map *scopes, Block *block, int32_t base_off
     return current_size + nested_size;
 }
 
-Map *scopes_build(Program *prog) {
+ScopeHierarchy *scope_hierarchy_build(const Program *prog) {
     Map *scopes = map_create(
         hashf_uint32,
         (PrintFunction)uint32_print,
@@ -172,9 +194,43 @@ Map *scopes_build(Program *prog) {
 
     scope->required_size = current_size + nested_size;
 
-    return scopes;
+    ScopeHierarchy *sh = malloc(sizeof(ScopeHierarchy));
+    *sh = (ScopeHierarchy){
+        .prog = prog,
+        .scopes = scopes,
+    };
+    return sh;
 }
 
-void destroy_scopes(Map *scopes) {
-    map_destroy(scopes);
+static inline void _scope_hierarchy_print(const ScopeHierarchy *sh, size_t padding, uint32_t scope_id) {
+    Scope *scope = map_get_(sh->scopes, scope_id);
+    scope_print(scope, padding);
+
+    print_padding(padding + 1);
+    puts("scopes:");
+
+    for (size_t i = 0; i < vec_length(scope->scopes); i++) {
+        void *maybe_inner_scope_id = vec_get_at(scope->scopes, i);
+        if (maybe_inner_scope_id == NULL) {
+            puts("null :(");
+            continue;
+        }
+        IGNORE_POINTER_TO_INT()
+        _scope_hierarchy_print(sh, padding + 2, (uint32_t)maybe_inner_scope_id);
+    }
+}
+
+void scope_hierarchy_print(const ScopeHierarchy *sh, size_t padding) {
+    print_padding(padding);
+    puts("ScopeHierarchy");
+
+    print_padding(padding + 1);
+    puts("data:");
+
+    _scope_hierarchy_print(sh, padding + 2, sh->prog->id);
+}
+
+void scope_hierarchy_destroy(ScopeHierarchy *sh) {
+    map_destroy(sh->scopes);
+    free(sh);
 }

@@ -26,5 +26,6 @@ typedef struct Scope Scope;
 Scope   *scope_create(size_t id, int32_t base_offset);
 void     scope_add_variable(Scope *scope, const char *name, int32_t offset);
 VarInfo *scope_get_variable(Scope *scope, const char *name);
+void     scope_add_scope(Scope *scope, uint32_t inner_scope_id);
 void     scope_print(const Scope *scope, size_t padding);
 void     scope_destroy(Scope *scope);

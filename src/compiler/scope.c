@@ -34,6 +34,11 @@ void var_info_print(const VarInfo *vi, size_t padding) {
     printf("VarInfo[offset=%" PRId32 ", defined=%d]\n", vi->offset, vi->defined);
 }
 
+void var_name_print(const char *name, size_t padding) {
+    print_padding(padding);
+    puts(name);
+}
+
 Scope *scope_create(size_t id, int32_t base_offset) {
     Scope *scope = malloc(sizeof(Scope));
     *scope = (Scope){
@@ -41,7 +46,7 @@ Scope *scope_create(size_t id, int32_t base_offset) {
         .base_offset = base_offset,
         .vars = map_create(
             hashf_string,
-            (PrintFunction)puts,
+            (PrintFunction)var_name_print,
             free,
             (PrintFunction)var_info_print,
             (DestroyFunction)var_info_destroy
@@ -69,15 +74,15 @@ VarInfo *scope_get_variable(Scope *scope, const char *name) {
     return map_get(scope->vars, name);
 }
 
+void scope_add_scope(Scope *scope, uint32_t inner_scope_id) {
+    vec_push_back(scope->scopes, (void *)inner_scope_id);
+}
+
 void scope_print(const Scope *scope, size_t padding) {
     print_padding(padding);
-    printf("Scope[id=%zu, parent_id=%zu, size=%zu]\n", scope->id, scope->parent_id, scope->required_size);
+    printf("Scope[id=%zu, parent_id=%zu, size=%zu, base_offset=%" PRId32 "]\n", scope->id, scope->parent_id, scope->required_size, scope->base_offset);
 
     print_padding(padding + 1);
-    printf("variables:");
+    puts("variables:");
     map_print(scope->vars, padding + 2);
-
-    print_padding(padding + 1);
-    printf("scopes:");
-    vec_print(scope->scopes, padding + 2);
 }

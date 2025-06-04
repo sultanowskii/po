@@ -19,7 +19,7 @@ Program *program_destroy(Program *program) {
     free(program);
 }
 
-void print_program(Program *prog, size_t padding) {
+void program_print(Program *prog, size_t padding) {
     printf("Program[id=%zu]\n", prog->id);
 
     print_padding(padding + 1);
