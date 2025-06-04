@@ -1,6 +1,7 @@
 #include "compiler/scopes.h"
 
 #include <inttypes.h>
+#include <stdio.h>
 
 #include "compile.h"
 #include "compiler/ast/binary_op.h"
@@ -138,7 +139,12 @@ static inline int32_t traverse_block(Map *scopes, Block *block, int32_t base_off
     scope->parent_id = parent_id;
 
     int32_t current_size = calculate_required_stack_size_of_this_scope(scopes, block->statements, block->id);
-    int32_t nested_size = calculate_required_stack_size_of_nested_scopes(scopes, block->statements, block->id, current_size);
+    int32_t nested_size = calculate_required_stack_size_of_nested_scopes(
+        scopes,
+        block->statements,
+        block->id,
+        current_size
+    );
 
     scope->required_size = current_size + nested_size;
 
@@ -146,12 +152,23 @@ static inline int32_t traverse_block(Map *scopes, Block *block, int32_t base_off
 }
 
 Map *scopes_build(Program *prog) {
-    Map   *scopes = map_create(hashf_uint32, destroy_nop, (DestroyFunction)scope_destroy);
+    Map *scopes = map_create(
+        hashf_uint32,
+        (PrintFunction)uint32_print,
+        destroy_nop,
+        (PrintFunction)scope_print,
+        (DestroyFunction)scope_destroy
+    );
     Scope *scope = scope_create(prog->id, 0);
     map_set_(scopes, prog->id, scope);
 
     int32_t current_size = calculate_required_stack_size_of_this_scope(scopes, prog->statements, prog->id);
-    int32_t nested_size = calculate_required_stack_size_of_nested_scopes(scopes, prog->statements, prog->id, current_size);
+    int32_t nested_size = calculate_required_stack_size_of_nested_scopes(
+        scopes,
+        prog->statements,
+        prog->id,
+        current_size
+    );
 
     scope->required_size = current_size + nested_size;
 

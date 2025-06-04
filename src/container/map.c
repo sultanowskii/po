@@ -2,9 +2,13 @@
 
 #include <inttypes.h>
 #include <malloc.h>
+#include <stdio.h>
 #include <string.h>
 
+#include "container/destruction.h"
 #include "container/hash.h"
+#include "container/print.h"
+#include "fmt.h"
 
 #define BUCKET_COUNT 64
 
@@ -17,10 +21,12 @@ struct MapEntry {
 };
 
 struct Map {
-    MapEntry       *buckets[BUCKET_COUNT];
-    HashFunction    hash_key;
+    PrintFunction   key_print;
     DestroyFunction key_destroy;
     DestroyFunction value_destroy;
+    PrintFunction   value_print;
+    HashFunction    key_hash;
+    MapEntry       *buckets[BUCKET_COUNT];
 };
 
 static inline MapEntry *map_entry_create(Hash hash, void *key, void *value, MapEntry *next) {
@@ -43,11 +49,19 @@ static inline void map_entry_destroy(
     free(entry);
 }
 
-Map *map_create(HashFunction hash_key, DestroyFunction key_destroy, DestroyFunction value_destroy) {
+Map *map_create(
+    HashFunction    key_hash,
+    PrintFunction   key_print,
+    DestroyFunction key_destroy,
+    PrintFunction   value_print,
+    DestroyFunction value_destroy
+) {
     Map *map = malloc(sizeof(Map));
     *map = (Map){
-        .hash_key = hash_key,
+        .key_hash = key_hash,
+        .key_print = key_print,
         .key_destroy = key_destroy,
+        .value_print = value_print,
         .value_destroy = value_destroy,
     };
     memset(map->buckets, 0, sizeof(map->buckets));
@@ -67,8 +81,8 @@ void map_destroy(Map *map) {
     free(map);
 }
 
-void *map_get(const Map *map, void *key) {
-    Hash   hash = map->hash_key(key);
+void *map_get(const Map *map, const void *key) {
+    Hash   hash = map->key_hash(key);
     size_t bucket_index = hash % BUCKET_COUNT;
 
     MapEntry *entry = map->buckets[bucket_index];
@@ -82,7 +96,7 @@ void *map_get(const Map *map, void *key) {
 }
 
 void map_set(Map *map, void *key, void *value) {
-    Hash   hash = map->hash_key(key);
+    Hash   hash = map->key_hash(key);
     size_t bucket_index = hash % BUCKET_COUNT;
 
     MapEntry *entry = map->buckets[bucket_index];
@@ -102,4 +116,31 @@ void map_set(Map *map, void *key, void *value) {
     }
 
     prev->next = map_entry_create(hash, key, value, entry);
+}
+
+void map_print(const Map *map, size_t padding) {
+    print_padding(padding);
+    puts("Map");
+
+    print_padding(padding + 1);
+    puts("data:");
+
+    for (size_t i = 0; i < BUCKET_COUNT; i++) {
+        MapEntry *entry = map->buckets[i];
+
+        while (entry != NULL) {
+            print_padding(padding + 2);
+            puts("Entry");
+
+            print_padding(padding + 3);
+            puts("key:");
+            map->key_print(entry->key, padding + 4);
+
+            print_padding(padding + 3);
+            puts("value:");
+            map->value_print(entry->value, padding + 4);
+
+            entry = entry->next;
+        }
+    }
 }

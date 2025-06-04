@@ -3,6 +3,8 @@
 #include <inttypes.h>
 #include <stddef.h>
 
+#include "compile.h"
+
 const uint32_t FNV1A32_OFFSET_BASIS = 0x811c9dc5;
 const uint32_t FNV1A32_PRIME = 0x01000193;
 
@@ -30,8 +32,6 @@ Hash hash_uint32(uint32_t num) {
 }
 
 Hash hashf_uint32(const void *v) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
+    IGNORE_POINTER_TO_INT()
     return hash_uint32((uint32_t)v);
-#pragma GCC diagnostic pop
 }

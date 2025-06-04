@@ -4,13 +4,17 @@
 #include <malloc.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #include "compile.h"
 #include "compiler/id_provider.h"
 #include "container/destruction.h"
 #include "container/hash.h"
 #include "container/map.h"
+#include "container/print.h"
 #include "container/vec.h"
+#include "fmt.h"
+#include "string.h"
 
 VarInfo *var_info_create(int32_t offset, bool defined) {
     VarInfo *vi = malloc(sizeof(VarInfo));
@@ -25,14 +29,25 @@ void var_info_destroy(VarInfo *vi) {
     free(vi);
 }
 
+void var_info_print(const VarInfo *vi, size_t padding) {
+    print_padding(padding);
+    printf("VarInfo[offset=%" PRId32 ", defined=%d]\n", vi->offset, vi->defined);
+}
+
 Scope *scope_create(size_t id, int32_t base_offset) {
     Scope *scope = malloc(sizeof(Scope));
     *scope = (Scope){
         .id = id,
         .base_offset = base_offset,
-        .vars = map_create(hashf_string, free, (DestroyFunction)var_info_destroy),
+        .vars = map_create(
+            hashf_string,
+            (PrintFunction)puts,
+            free,
+            (PrintFunction)var_info_print,
+            (DestroyFunction)var_info_destroy
+        ),
         .parent_id = ID_PROVIDER_INVALID_ID,
-        .scopes = vec_create(),
+        .scopes = vec_create((PrintFunction)uint32_print, destroy_nop),
     };
     return scope;
 }
@@ -46,10 +61,23 @@ void scope_destroy(Scope *scope) {
 void scope_add_variable(Scope *scope, const char *name, int32_t offset) {
     VarInfo *vi = var_info_create(offset, false);
     IGNORE_INT_TO_POINTER()
-    map_set(scope->vars, name, vi);
+    map_set(scope->vars, strdup(name), vi);
 }
 
 VarInfo *scope_get_variable(Scope *scope, const char *name) {
     IGNORE_INT_TO_POINTER()
     return map_get(scope->vars, name);
+}
+
+void scope_print(const Scope *scope, size_t padding) {
+    print_padding(padding);
+    printf("Scope[id=%zu, parent_id=%zu, size=%zu]\n", scope->id, scope->parent_id, scope->required_size);
+
+    print_padding(padding + 1);
+    printf("variables:");
+    map_print(scope->vars, padding + 2);
+
+    print_padding(padding + 1);
+    printf("scopes:");
+    vec_print(scope->scopes, padding + 2);
 }
