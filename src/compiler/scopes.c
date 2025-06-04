@@ -2,6 +2,7 @@
 
 #include <inttypes.h>
 
+#include "compile.h"
 #include "compiler/ast/binary_op.h"
 #include "compiler/ast/block.h"
 #include "compiler/ast/expression.h"
@@ -14,10 +15,6 @@
 #include "math.h"
 #include "str.h"
 
-#define IGNORE_INT_TO_POINTER() _Pragma("GCC diagnostic ignored \"-Wint-to-pointer-cast\"")
-#define map_set_(m, k, v) map_set((m), (void *)(k), (void *)(v))
-#define map_get_(m, k) map_get((m), (void *)(k))
-
 static int32_t traverse_block(Map *scopes, Block *block, int32_t base_offset, uint32_t parent_id);
 
 static inline void validate_identifier(Map *scopes, Identifier *ident, uint32_t current_scope_id) {
@@ -27,7 +24,7 @@ static inline void validate_identifier(Map *scopes, Identifier *ident, uint32_t 
     while (scope_id != ID_PROVIDER_INVALID_ID) {
         IGNORE_INT_TO_POINTER()
         Scope *tmp = map_get_(scopes, scope_id);
-        if (map_get_(tmp->vars, var_name) != NULL) {
+        if (scope_get_variable(tmp, var_name) != NULL) {
             break;
         }
         scope_id = tmp->parent_id;
@@ -62,7 +59,8 @@ static inline int32_t calculate_required_stack_size_of_this_scope(
     uint32_t       scope_id
 ) {
     StatementListNode *node = statement_list->head;
-    Scope             *scope = map_get_(scopes, scope_id);
+    IGNORE_INT_TO_POINTER()
+    Scope *scope = map_get_(scopes, scope_id);
 
     int32_t current_offset = 0;
     while (node != NULL) {
@@ -71,12 +69,11 @@ static inline int32_t calculate_required_stack_size_of_this_scope(
             validate_expression(scopes, node->stmt->new_variable.expr, scope_id);
 
             const char *var_name = node->stmt->new_variable.ident->name;
-            if (map_get_(scope->vars, var_name) != NULL) {
+            if (scope_get_variable(scope, var_name) != NULL) {
                 // TODO: error: variable is already declared in this scope
                 return -100500;
             }
-            IGNORE_INT_TO_POINTER()
-            map_set_(scope->vars, strdup(var_name), current_offset);
+            scope_add_variable(scope, var_name, current_offset);
             current_offset += 1; // TODO: type size
             break;
         }

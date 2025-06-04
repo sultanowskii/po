@@ -2,20 +2,35 @@
 
 #include <inttypes.h>
 #include <malloc.h>
+#include <stdbool.h>
 #include <stddef.h>
 
+#include "compile.h"
 #include "compiler/id_provider.h"
 #include "container/destruction.h"
 #include "container/hash.h"
 #include "container/map.h"
 #include "container/vec.h"
 
+VarInfo *var_info_create(int32_t offset, bool defined) {
+    VarInfo *vi = malloc(sizeof(VarInfo));
+    *vi = (VarInfo){
+        .offset = offset,
+        .defined = defined,
+    };
+    return vi;
+}
+
+void var_info_destroy(VarInfo *vi) {
+    free(vi);
+}
+
 Scope *scope_create(size_t id, int32_t base_offset) {
     Scope *scope = malloc(sizeof(Scope));
     *scope = (Scope){
         .id = id,
         .base_offset = base_offset,
-        .vars = map_create(hashf_string, free, destroy_nop),
+        .vars = map_create(hashf_string, free, (DestroyFunction)var_info_destroy),
         .parent_id = ID_PROVIDER_INVALID_ID,
         .scopes = vec_create(),
     };
@@ -26,4 +41,15 @@ void scope_destroy(Scope *scope) {
     map_destroy(scope->vars);
     vec_destroy(scope->scopes);
     free(scope);
+}
+
+void scope_add_variable(Scope *scope, const char *name, int32_t offset) {
+    VarInfo *vi = var_info_create(offset, false);
+    IGNORE_INT_TO_POINTER()
+    map_set(scope->vars, name, vi);
+}
+
+VarInfo *scope_get_variable(Scope *scope, const char *name) {
+    IGNORE_INT_TO_POINTER()
+    return map_get(scope->vars, name);
 }
