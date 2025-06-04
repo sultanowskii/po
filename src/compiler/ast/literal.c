@@ -1,8 +1,8 @@
 #include "compiler/ast/literal.h"
 
+#include <inttypes.h>
 #include <malloc.h>
 #include <stdio.h>
-#include <inttypes.h>
 
 #include "fmt.h"
 
