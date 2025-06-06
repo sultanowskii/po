@@ -5,7 +5,17 @@
 #include "container/destruction.h"
 #include "container/print.h"
 
-struct Stack;
+typedef struct StackNode StackNode;
+struct StackNode {
+    void      *val;
+    StackNode *next;
+};
+
+struct Stack {
+    PrintFunction   elem_print;
+    DestroyFunction elem_destroy;
+    StackNode      *head;
+};
 typedef struct Stack Stack;
 
 Stack *stack_create(PrintFunction elem_print, DestroyFunction elem_destroy);

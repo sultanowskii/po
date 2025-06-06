@@ -1,4 +1,4 @@
-#include "scope_hierarchy.h"
+#include "compiler/scope_hierarchy.h"
 
 #include <inttypes.h>
 #include <malloc.h>

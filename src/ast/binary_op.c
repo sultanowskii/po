@@ -22,31 +22,9 @@ void binary_op_destroy(BinaryOp *bin_op) {
     free(bin_op);
 }
 
-static inline char *bin_op_type_to_str(BinaryOp *bin_op) {
-    switch (bin_op->op) {
-    case BINARY_OP_AND:
-        return "&&";
-    case BINARY_OP_OR:
-        return "||";
-    case BINARY_OP_EQUALS:
-        return "==";
-    case BINARY_OP_NOT_EQUALS:
-        return "!=";
-    case BINARY_OP_PLUS:
-        return "+";
-    case BINARY_OP_MINUS:
-        return "-";
-    case BINARY_OP_MUL:
-        return "*";
-    case BINARY_OP_DIV:
-        return "/";
-    }
-    return "unknown";
-}
-
 void binary_op_print(BinaryOp *bin_op, size_t padding) {
     print_padding(padding);
-    printf("BinOp[%s]\n", bin_op_type_to_str(bin_op));
+    printf("BinOp[%s]\n", BINARY_OP_TYPE_STR[bin_op->op]);
 
     print_padding(padding + 1);
     puts("left:");

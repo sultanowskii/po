@@ -20,17 +20,9 @@ void unary_op_destroy(UnaryOp *una_op) {
     free(una_op);
 }
 
-static inline char *una_op_type_to_str(UnaryOp *una_op) {
-    switch (una_op->op) {
-    case UNARY_OP_NOT:
-        return "!";
-    }
-    return "unknown";
-}
-
 void unary_op_print(UnaryOp *una_op, size_t padding) {
     print_padding(padding);
-    printf("UnaOp[%s]\n", una_op_type_to_str(una_op));
+    printf("UnaOp[%s]\n", UNARY_OP_TYPE_STR[una_op->op]);
 
     print_padding(padding + 1);
     puts("expr:");

@@ -1,4 +1,4 @@
-#include "scope.h"
+#include "compiler/scope.h"
 
 #include <inttypes.h>
 #include <malloc.h>
@@ -34,11 +34,6 @@ void var_info_print(const VarInfo *vi, size_t padding) {
     printf("VarInfo[offset=%" PRId32 ", defined=%d]\n", vi->offset, vi->defined);
 }
 
-void var_name_print(const char *name, size_t padding) {
-    print_padding(padding);
-    puts(name);
-}
-
 Scope *scope_create(size_t id, int32_t base_offset) {
     Scope *scope = malloc(sizeof(Scope));
     *scope = (Scope){
@@ -46,7 +41,7 @@ Scope *scope_create(size_t id, int32_t base_offset) {
         .base_offset = base_offset,
         .vars = map_create(
             hashf_string,
-            (PrintFunction)var_name_print,
+            (PrintFunction)string_print,
             free,
             (PrintFunction)var_info_print,
             (DestroyFunction)var_info_destroy

@@ -10,6 +10,10 @@ enum UnaryOpType {
 };
 typedef enum UnaryOpType UnaryOpType;
 
+static const char *UNARY_OP_TYPE_STR[] = {
+    [UNARY_OP_NOT] = "!",
+};
+
 struct UnaryOp {
     UnaryOpType op;
     Expression *expr;

@@ -7,12 +7,6 @@
 #include "container/print.h"
 #include "std/fmt.h"
 
-typedef struct StackNode StackNode;
-struct StackNode {
-    void      *val;
-    StackNode *next;
-};
-
 static inline StackNode *stack_node_create(void *val) {
     StackNode *node = malloc(sizeof(StackNode));
     *node = (StackNode){
@@ -26,12 +20,6 @@ static inline void stack_node_destroy(const Stack *stack, StackNode *node) {
     stack->elem_destroy(node->val);
     free(node);
 }
-
-struct Stack {
-    PrintFunction   elem_print;
-    DestroyFunction elem_destroy;
-    StackNode      *head;
-};
 
 Stack *stack_create(PrintFunction elem_print, DestroyFunction elem_destroy) {
     Stack *stack = malloc(sizeof(Stack));

@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 #include "ast/ast.h"
+#include "compiler/scope_hierarchy.h"
 #include "id_provider.h"
-#include "scope_hierarchy.h"
 
 extern int yyparse(IDProvider *idp, Program **program);
 

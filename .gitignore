@@ -1,4 +1,6 @@
 poc
+poi
+
 *.elf
 *.o
 *.out

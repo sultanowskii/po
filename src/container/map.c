@@ -108,6 +108,7 @@ void map_set(Map *map, void *key, void *value) {
     MapEntry *prev = entry;
     while (entry != NULL) {
         if (entry->hash == hash) {
+            map->value_destroy(entry->value);
             entry->value = value;
             return;
         }
