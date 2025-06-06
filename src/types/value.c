@@ -1,11 +1,11 @@
-#include "interp/value.h"
+#include "types/value.h"
 
 #include <inttypes.h>
 #include <malloc.h>
 
-#include "interp/value_type.h"
 #include "std/fmt.h"
 #include "std/str.h"
+#include "types/value_type.h"
 
 Value *value_create_int(int32_t val) {
     Value *value = malloc(sizeof(Value));

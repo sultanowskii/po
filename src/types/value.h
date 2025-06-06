@@ -3,7 +3,7 @@
 #include <inttypes.h>
 #include <stddef.h>
 
-#include "interp/value_type.h"
+#include "types/value_type.h"
 
 struct Value {
     ValueType type;

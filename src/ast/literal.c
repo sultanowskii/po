@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "std/fmt.h"
+#include "std/str.h"
 
 Literal *literal_create_int(int32_t value) {
     Literal *lit = malloc(sizeof(Literal));
@@ -15,30 +16,42 @@ Literal *literal_create_int(int32_t value) {
     return lit;
 }
 
-void literal_destroy(Literal *lit) {
-    free(lit);
+Literal *literal_create_str(const char *value) {
+    Literal *lit = malloc(sizeof(Literal));
+    *lit = (Literal){
+        .type = LITERAL_STR,
+        .str = strdup(value),
+    };
+    return lit;
 }
 
-static inline char *literal_type_to_str(Literal *literal) {
+void literal_destroy(Literal *literal) {
     switch (literal->type) {
-    case LITERAL_INT:
-        return "int";
+    case LITERAL_STR:
+        free(literal->str);
+        break;
     }
-    return "unknown";
+    free(literal);
 }
 
 static inline char *literal_print_value(Literal *literal) {
+    return "unknown";
+}
+
+void literal_print(Literal *literal, size_t padding) {
+    print_padding(padding);
+    printf("Literal[type=%s]", LITERAL_TYPE_STR[literal->type]);
+
+    print_padding(padding + 1);
+    puts("value:");
+
+    print_padding(padding + 2);
     switch (literal->type) {
     case LITERAL_INT:
         printf("%lld", literal->int_);
         break;
+    case LITERAL_STR:
+        puts(literal->str);
+        break;
     }
-    return "unknown";
-}
-
-void literal_print(Literal *literal, size_t depth) {
-    print_padding(depth);
-    printf("Literal[type=%s, value=", literal_type_to_str(literal));
-    literal_print_value(literal);
-    puts("]");
 }

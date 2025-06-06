@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-#include "interp/value.h"
+#include "types/value.h"
 
 struct Scope;
 typedef struct Scope Scope;

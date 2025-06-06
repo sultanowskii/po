@@ -35,20 +35,22 @@ ValueResult interpret_unary_op(Stack *scopes, UnaryOp *una_op) {
     }
 
     Value *val = value_result_get_val(res);
+    if (val->type == TYPE_STR) {
+        return value_result_err(
+            msprintf(
+                "unary operation '%s' is not applicable to type %s",
+                UNARY_OP_TYPE_STR[una_op->op],
+                VALUE_TYPE_STR[TYPE_STR]
+            )
+        );
+    }
+
     switch (una_op->op) {
     case UNARY_OP_NOT:
         switch (val->type) {
         case TYPE_INT:
             val->int_ = !val->int_;
             return value_result_ok(val);
-        case TYPE_STR:
-            return value_result_err(
-                msprintf(
-                    "unary operation '%s' is not applicable to type %s",
-                    UNARY_OP_TYPE_STR[una_op->op],
-                    VALUE_TYPE_STR[TYPE_STR]
-                )
-            );
         }
         break;
     }
@@ -91,23 +93,17 @@ ValueResult interpret_binary_op(Stack *scopes, BinaryOp *bin_op) {
     Value *left = value_result_get_val(res_left);
     Value *right = value_result_get_val(res_right);
 
-    // check type match for certain operations
+    if (left->type != right->type) {
+        goto ERR_MISMATCH;
+    }
+
     switch (bin_op->op) {
-    case BINARY_OP_EQUALS:
-    case BINARY_OP_NOT_EQUALS:
     case BINARY_OP_PLUS:
     case BINARY_OP_MINUS:
     case BINARY_OP_MUL:
     case BINARY_OP_DIV:
-        if (left->type != right->type) {
-            return value_result_err(
-                msprintf(
-                    "binary operation '%s' is not applicable between types '%s' and %s",
-                    BINARY_OP_TYPE_STR[bin_op->op],
-                    VALUE_TYPE_STR[left->type],
-                    VALUE_TYPE_STR[right->type]
-                )
-            );
+        if (left->type == TYPE_STR || right->type == TYPE_STR) {
+            goto ERR_MISMATCH;
         }
         break;
     }
@@ -125,38 +121,18 @@ ValueResult interpret_binary_op(Stack *scopes, BinaryOp *bin_op) {
         switch (left->type) {
         case TYPE_INT:
             return value_result_ok(value_create_int(left->int_ + right->int_));
-        case TYPE_STR:
-            // TODO ?
         }
         break;
     case BINARY_OP_MINUS:
         switch (left->type) {
         case TYPE_INT:
             return value_result_ok(value_create_int(left->int_ - right->int_));
-        case TYPE_STR:
-            return value_result_err(
-                msprintf(
-                    "binary operation '%s' is not applicable between types '%s' and %s",
-                    BINARY_OP_TYPE_STR[bin_op->op],
-                    VALUE_TYPE_STR[left->type],
-                    VALUE_TYPE_STR[right->type]
-                )
-            );
         }
         break;
     case BINARY_OP_MUL:
         switch (left->type) {
         case TYPE_INT:
             return value_result_ok(value_create_int(left->int_ * right->int_));
-        case TYPE_STR:
-            return value_result_err(
-                msprintf(
-                    "binary operation '%s' is not applicable between types '%s' and %s",
-                    BINARY_OP_TYPE_STR[bin_op->op],
-                    VALUE_TYPE_STR[left->type],
-                    VALUE_TYPE_STR[right->type]
-                )
-            );
         }
         break;
     case BINARY_OP_DIV:
@@ -166,26 +142,30 @@ ValueResult interpret_binary_op(Stack *scopes, BinaryOp *bin_op) {
                 return value_result_err(msprintf("division by zero"));
             }
             return value_result_ok(value_create_int(left->int_ / right->int_));
-        case TYPE_STR:
-            return value_result_err(
-                msprintf(
-                    "binary operation '%s' is not applicable between types '%s' and %s",
-                    BINARY_OP_TYPE_STR[bin_op->op],
-                    VALUE_TYPE_STR[left->type],
-                    VALUE_TYPE_STR[right->type]
-                )
-            );
         }
         break;
     }
+
+ERR_UNEXPECTED_STATE:
+    return value_result_err(msprintf("binary operation: unexpected state"));
+
+ERR_MISMATCH:
+    return value_result_err(
+        msprintf(
+            "binary operation '%s' is not applicable between types '%s' and %s",
+            BINARY_OP_TYPE_STR[bin_op->op],
+            VALUE_TYPE_STR[left->type],
+            VALUE_TYPE_STR[right->type]
+        )
+    );
 }
 
 ValueResult interpret_literal(Stack *scopes, Literal *lit) {
-    // TODO: unify type union
-    // TODO: handle string
     switch (lit->type) {
     case LITERAL_INT:
         return value_result_ok(value_create_int(lit->int_));
+    case LITERAL_STR:
+        return value_result_ok(value_create_str(lit->str));
     }
     return value_result_err(msprintf("literal: unexpected state"));
 }
@@ -219,7 +199,8 @@ ValueResult interpret_expression(Stack *scopes, Expression *expr) {
 char *interpret_statement(Stack *scopes, Statement *stmt) {
     Scope      *scope = stack_top(scopes);
     ValueResult res;
-    Value      *value;
+    Value      *value = NULL;
+    char       *err = NULL;
 
     switch (stmt->type) {
     case STATEMENT_NEW_VARIABLE:
@@ -242,7 +223,7 @@ char *interpret_statement(Stack *scopes, Statement *stmt) {
         }
         value = value_result_get_val(res);
 
-        char *err = scope_update_var(target_scope, stmt->assign.ident->name, value);
+        err = scope_update_var(target_scope, stmt->assign.ident->name, value);
         if (err != NULL) {
             return err;
         }
@@ -255,7 +236,10 @@ char *interpret_statement(Stack *scopes, Statement *stmt) {
         value = value_result_get_val(res);
 
         if (value->int_) {
-            interpret_block(scopes, stmt->if_.if_block);
+            err = interpret_block(scopes, stmt->if_.if_block);
+            if (err != NULL) {
+                return err;
+            }
         }
         break;
     case STATEMENT_IF_ELSE:
@@ -266,9 +250,15 @@ char *interpret_statement(Stack *scopes, Statement *stmt) {
         value = value_result_get_val(res);
 
         if (value->int_) {
-            interpret_block(scopes, stmt->if_else.if_block);
+            err = interpret_block(scopes, stmt->if_else.if_block);
+            if (err != NULL) {
+                return err;
+            }
         } else {
-            interpret_block(scopes, stmt->if_else.else_block);
+            err = interpret_block(scopes, stmt->if_else.else_block);
+            if (err != NULL) {
+                return err;
+            }
         }
         break;
     case STATEMENT_WHILE:
@@ -283,11 +273,17 @@ char *interpret_statement(Stack *scopes, Statement *stmt) {
                 break;
             }
 
-            interpret_block(scopes, stmt->while_.block);
+            err = interpret_block(scopes, stmt->while_.block);
+            if (err != NULL) {
+                return err;
+            }
         } while (ok);
         break;
     case STATEMENT_BLOCK:
-        interpret_block(scopes, stmt->block.block);
+        err = interpret_block(scopes, stmt->block.block);
+        if (err != NULL) {
+            return err;
+        }
         break;
     }
 }
@@ -310,14 +306,22 @@ RET:
     return err;
 }
 
-void interpret(Program *prog) {
+char *interpret(Program *prog) {
+    char  *err = NULL;
     Stack *scopes = stack_create((PrintFunction)scope_print, (DestroyFunction)scope_destroy);
     stack_push(scopes, scope_create());
 
     StatementListNode *node = prog->statements->head;
 
     while (node != NULL) {
-        interpret_statement(scopes, node->stmt);
+        err = interpret_statement(scopes, node->stmt);
+        if (err != NULL) {
+            goto RET;
+        }
         node = node->next;
     }
+
+RET:
+    stack_destroy(scopes);
+    return err;
 }

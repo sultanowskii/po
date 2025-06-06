@@ -5,9 +5,9 @@
 #include "container/hash.h"
 #include "container/map.h"
 #include "container/print.h"
-#include "interp/value.h"
 #include "std/fmt.h"
 #include "std/str.h"
+#include "types/value.h"
 
 struct Scope {
     // map[const char *name, Value]
