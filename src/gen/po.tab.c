@@ -79,8 +79,8 @@
 
     void yyerror(IDProvider *idp, Program **prog, const char *s);
 
-    // int yydebug = 1;
-    // #define YYDEBUG 1
+    int yydebug = 1;
+    #define YYDEBUG 1
 
 #line 86 "src/gen/po.tab.c"
 
