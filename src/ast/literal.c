@@ -40,7 +40,7 @@ static inline char *literal_print_value(Literal *literal) {
 
 void literal_print(Literal *literal, size_t padding) {
     print_padding(padding);
-    printf("Literal[type=%s]", LITERAL_TYPE_STR[literal->type]);
+    printf("Literal[type=%s]\n", LITERAL_TYPE_STR[literal->type]);
 
     print_padding(padding + 1);
     puts("value:");
@@ -48,7 +48,7 @@ void literal_print(Literal *literal, size_t padding) {
     print_padding(padding + 2);
     switch (literal->type) {
     case LITERAL_INT:
-        printf("%lld", literal->int_);
+        printf("%lld\n", literal->int_);
         break;
     case LITERAL_STR:
         puts(literal->str);

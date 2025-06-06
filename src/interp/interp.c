@@ -204,6 +204,10 @@ char *interpret_statement(Stack *scopes, Statement *stmt) {
 
     switch (stmt->type) {
     case STATEMENT_NEW_VARIABLE:
+        if (scope_get_var(scope, stmt->new_variable.ident->name) != NULL) {
+            return msprintf("variable is already defined in the scope: %s", stmt->new_variable.ident->name);
+        }
+
         res = interpret_expression(scopes, stmt->new_variable.expr);
         if (value_result_is_err(res)) {
             return value_result_get_err(res);
@@ -286,6 +290,8 @@ char *interpret_statement(Stack *scopes, Statement *stmt) {
         }
         break;
     }
+
+    return NULL;
 }
 
 char *interpret_block(Stack *scopes, Block *block) {

@@ -52,6 +52,8 @@ char *scope_update_var(Scope *scope, char *name, Value *value) {
     }
 
     map_set(scope->vars, name, value);
+
+    return NULL;
 }
 
 void scope_print(const Scope *scope, size_t padding) {
