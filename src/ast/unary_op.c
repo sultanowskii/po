@@ -1,10 +1,10 @@
-#include "compiler/ast/unary_op.h"
+#include "ast/unary_op.h"
 
 #include <malloc.h>
 #include <stdio.h>
 
-#include "compiler/ast/expression.h"
-#include "fmt.h"
+#include "ast/expression.h"
+#include "std/fmt.h"
 
 UnaryOp *unary_op_create(UnaryOpType op_type, Expression *expr) {
     UnaryOp *una_op = malloc(sizeof(UnaryOp));

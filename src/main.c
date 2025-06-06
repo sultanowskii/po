@@ -1,9 +1,9 @@
 #include <malloc.h>
 #include <stdio.h>
 
-#include "compiler/ast/ast.h"
-#include "compiler/id_provider.h"
-#include "compiler/scope_hierarchy.h"
+#include "ast/ast.h"
+#include "id_provider.h"
+#include "scope_hierarchy.h"
 
 extern int yyparse(IDProvider *idp, Program **program);
 

@@ -1,10 +1,10 @@
-#include "compiler/ast/statement_list.h"
+#include "ast/statement_list.h"
 
 #include <malloc.h>
 #include <stddef.h>
 #include <stdio.h>
 
-#include "fmt.h"
+#include "std/fmt.h"
 
 static inline StatementListNode *statement_list_node_create(Statement *stmt, StatementListNode *next) {
     StatementListNode *node = malloc(sizeof(StatementListNode));

@@ -1,11 +1,11 @@
-#include "compiler/ast/block.h"
+#include "ast/block.h"
 
 #include <malloc.h>
 #include <stdio.h>
 
-#include "compiler/ast/statement_list.h"
-#include "compiler/id_provider.h"
-#include "fmt.h"
+#include "ast/statement_list.h"
+#include "id_provider.h"
+#include "std/fmt.h"
 
 Block *block_create(IDProvider *idp, StatementList *statement_list) {
     Block *block = malloc(sizeof(Block));

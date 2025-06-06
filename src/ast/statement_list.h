@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-#include "compiler/ast/statement.h"
+#include "ast/statement.h"
 
 typedef struct StatementListNode StatementListNode;
 struct StatementListNode {

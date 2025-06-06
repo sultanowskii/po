@@ -1,10 +1,10 @@
-#include "compiler/ast/literal.h"
+#include "ast/literal.h"
 
 #include <inttypes.h>
 #include <malloc.h>
 #include <stdio.h>
 
-#include "fmt.h"
+#include "std/fmt.h"
 
 Literal *literal_create_int(int32_t value) {
     Literal *lit = malloc(sizeof(Literal));

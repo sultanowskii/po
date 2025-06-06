@@ -1,10 +1,10 @@
-#include "compiler/ast/binary_op.h"
+#include "ast/binary_op.h"
 
 #include <malloc.h>
 #include <stdio.h>
 
-#include "compiler/ast/expression.h"
-#include "fmt.h"
+#include "ast/expression.h"
+#include "std/fmt.h"
 
 BinaryOp *binary_op_create(BinaryOpType op_type, Expression *left, Expression *right) {
     BinaryOp *bin_op = malloc(sizeof(BinaryOp));

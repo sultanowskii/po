@@ -1,13 +1,13 @@
-#include "compiler/ast/statement.h"
+#include "ast/statement.h"
 
 #include <malloc.h>
 #include <stdio.h>
 
-#include "compiler/ast/block.h"
-#include "compiler/ast/expression.h"
-#include "compiler/ast/identifier.h"
-#include "compiler/ast/statement_list.h"
-#include "fmt.h"
+#include "ast/block.h"
+#include "ast/expression.h"
+#include "ast/identifier.h"
+#include "ast/statement_list.h"
+#include "std/fmt.h"
 
 Statement *statement_create_empty(void) {
     return malloc(sizeof(Statement));

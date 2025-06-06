@@ -1,10 +1,10 @@
-#include "compiler/ast/identifier.h"
+#include "ast/identifier.h"
 
 #include <malloc.h>
 #include <stdio.h>
 
-#include "fmt.h"
-#include "str.h"
+#include "std/fmt.h"
+#include "std/str.h"
 
 Identifier *identifier_create(const char *name) {
     Identifier *ident = malloc(sizeof(Identifier));

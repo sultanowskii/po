@@ -1,4 +1,4 @@
-#include "compiler/scope.h"
+#include "scope.h"
 
 #include <inttypes.h>
 #include <malloc.h>
@@ -6,14 +6,14 @@
 #include <stddef.h>
 #include <stdio.h>
 
-#include "compile.h"
-#include "compiler/id_provider.h"
 #include "container/destruction.h"
 #include "container/hash.h"
 #include "container/map.h"
 #include "container/print.h"
 #include "container/vec.h"
-#include "fmt.h"
+#include "id_provider.h"
+#include "std/compile.h"
+#include "std/fmt.h"
 #include "string.h"
 
 VarInfo *var_info_create(Offset offset, bool defined) {

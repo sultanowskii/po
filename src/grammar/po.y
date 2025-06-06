@@ -3,7 +3,7 @@
     #include <stdio.h>
     #include <inttypes.h>
 
-    #include "compiler/ast/ast.h"
+    #include "ast/ast.h"
     // Stuff from Flex that Bison needs to know about:
     extern int yylex();
     extern FILE *yyin;
@@ -17,7 +17,7 @@
 // Required includes for all generated files
 // Without this, generated header won't #include ast.h.
 %code requires {
-    #include "compiler/ast/ast.h"
+    #include "ast/ast.h"
 }
 
 // Enabling verbose errors

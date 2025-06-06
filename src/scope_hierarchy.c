@@ -1,24 +1,24 @@
-#include "compiler/scope_hierarchy.h"
+#include "scope_hierarchy.h"
 
 #include <inttypes.h>
 #include <malloc.h>
 #include <stdio.h>
 
-#include "compile.h"
-#include "compiler/ast/binary_op.h"
-#include "compiler/ast/block.h"
-#include "compiler/ast/expression.h"
-#include "compiler/ast/identifier.h"
-#include "compiler/ast/program.h"
-#include "compiler/ast/unary_op.h"
-#include "compiler/id_provider.h"
-#include "compiler/scope.h"
+#include "ast/binary_op.h"
+#include "ast/block.h"
+#include "ast/expression.h"
+#include "ast/identifier.h"
+#include "ast/program.h"
+#include "ast/unary_op.h"
 #include "container/map.h"
 #include "container/vec.h"
-#include "fmt.h"
-#include "math.h"
-#include "result.h"
-#include "str.h"
+#include "id_provider.h"
+#include "scope.h"
+#include "std/compile.h"
+#include "std/fmt.h"
+#include "std/math.h"
+#include "std/result.h"
+#include "std/str.h"
 
 DEFINE_RESULT(Offset, offset, Offset)
 

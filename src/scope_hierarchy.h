@@ -2,9 +2,9 @@
 
 #include <stddef.h>
 
-#include "compiler/ast/program.h"
+#include "ast/program.h"
 #include "container/map.h"
-#include "result.h"
+#include "std/result.h"
 
 struct ScopeHierarchy;
 typedef struct ScopeHierarchy ScopeHierarchy;

@@ -1,8 +1,8 @@
 %{
     #include "gen/po.tab.h"
 
-    #include "compiler/ast/ast.h"
-    #include "str.h"
+    #include "ast/ast.h"
+    #include "std/str.h"
 
     extern YYSTYPE yylval;
 %}

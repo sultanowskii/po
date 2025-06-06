@@ -1,13 +1,13 @@
-#include "compiler/ast/expression.h"
+#include "ast/expression.h"
 
 #include <malloc.h>
 #include <stdio.h>
 
-#include "compiler/ast/binary_op.h"
-#include "compiler/ast/identifier.h"
-#include "compiler/ast/literal.h"
-#include "compiler/ast/unary_op.h"
-#include "fmt.h"
+#include "ast/binary_op.h"
+#include "ast/identifier.h"
+#include "ast/literal.h"
+#include "ast/unary_op.h"
+#include "std/fmt.h"
 
 static inline Expression *expression_create_empty(void) {
     return malloc(sizeof(Expression));

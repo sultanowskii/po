@@ -3,7 +3,7 @@
 #include <inttypes.h>
 #include <stddef.h>
 
-#include "compile.h"
+#include "std/compile.h"
 
 const uint32_t FNV1A32_OFFSET_BASIS = 0x811c9dc5;
 const uint32_t FNV1A32_PRIME = 0x01000193;

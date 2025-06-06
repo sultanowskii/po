@@ -1,11 +1,11 @@
-#include "compiler/ast/program.h"
+#include "ast/program.h"
 
 #include <malloc.h>
 #include <stdio.h>
 
-#include "compiler/ast/statement_list.h"
-#include "compiler/id_provider.h"
-#include "fmt.h"
+#include "ast/statement_list.h"
+#include "id_provider.h"
+#include "std/fmt.h"
 
 Program *program_create(IDProvider *idp, StatementList *statements) {
     Program *prog = malloc(sizeof(Program));

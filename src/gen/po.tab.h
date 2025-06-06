@@ -36,10 +36,10 @@
    private implementation details that can be changed or removed.  */
 
 #ifndef YY_YY_SRC_GEN_PO_TAB_H_INCLUDED
-# define YY_YY_SRC_GEN_PO_TAB_H_INCLUDED
+#define YY_YY_SRC_GEN_PO_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+#define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -47,75 +47,69 @@ extern int yydebug;
 /* "%code requires" blocks.  */
 #line 19 "src/grammar/po.y"
 
-    #include "compiler/ast/ast.h"
+#include "ast/ast.h"
 
 #line 53 "src/gen/po.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-  enum yytokentype
-  {
+#define YYTOKENTYPE
+enum yytokentype {
     YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
-    YYerror = 256,                 /* error  */
-    YYUNDEF = 257,                 /* "invalid token"  */
-    IF = 258,                      /* IF  */
-    ELSE = 259,                    /* ELSE  */
-    WHILE = 260,                   /* WHILE  */
-    L_PAREN = 261,                 /* L_PAREN  */
-    R_PAREN = 262,                 /* R_PAREN  */
-    L_BRACE = 263,                 /* L_BRACE  */
-    R_BRACE = 264,                 /* R_BRACE  */
-    SEMICOLON = 265,               /* SEMICOLON  */
-    OP_WALRUS = 266,               /* OP_WALRUS  */
-    OP_ASSIGN = 267,               /* OP_ASSIGN  */
-    OP_PLUS = 268,                 /* OP_PLUS  */
-    OP_MINUS = 269,                /* OP_MINUS  */
-    OP_MUL = 270,                  /* OP_MUL  */
-    OP_DIV = 271,                  /* OP_DIV  */
-    OP_AND = 272,                  /* OP_AND  */
-    OP_OR = 273,                   /* OP_OR  */
-    OP_EQUALS = 274,               /* OP_EQUALS  */
-    OP_NOT_EQUALS = 275,           /* OP_NOT_EQUALS  */
-    OP_NOT = 276,                  /* OP_NOT  */
-    LIT_INT = 277,                 /* LIT_INT  */
-    IDENTIFIER = 278,              /* IDENTIFIER  */
-    EOL = 279                      /* EOL  */
-  };
-  typedef enum yytokentype yytoken_kind_t;
+    YYEOF = 0,           /* "end of file"  */
+    YYerror = 256,       /* error  */
+    YYUNDEF = 257,       /* "invalid token"  */
+    IF = 258,            /* IF  */
+    ELSE = 259,          /* ELSE  */
+    WHILE = 260,         /* WHILE  */
+    L_PAREN = 261,       /* L_PAREN  */
+    R_PAREN = 262,       /* R_PAREN  */
+    L_BRACE = 263,       /* L_BRACE  */
+    R_BRACE = 264,       /* R_BRACE  */
+    SEMICOLON = 265,     /* SEMICOLON  */
+    OP_WALRUS = 266,     /* OP_WALRUS  */
+    OP_ASSIGN = 267,     /* OP_ASSIGN  */
+    OP_PLUS = 268,       /* OP_PLUS  */
+    OP_MINUS = 269,      /* OP_MINUS  */
+    OP_MUL = 270,        /* OP_MUL  */
+    OP_DIV = 271,        /* OP_DIV  */
+    OP_AND = 272,        /* OP_AND  */
+    OP_OR = 273,         /* OP_OR  */
+    OP_EQUALS = 274,     /* OP_EQUALS  */
+    OP_NOT_EQUALS = 275, /* OP_NOT_EQUALS  */
+    OP_NOT = 276,        /* OP_NOT  */
+    LIT_INT = 277,       /* LIT_INT  */
+    IDENTIFIER = 278,    /* IDENTIFIER  */
+    EOL = 279            /* EOL  */
+};
+typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
-{
+#if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
+union YYSTYPE {
 #line 30 "src/grammar/po.y"
 
-    UnaryOpType una_op_type;
-    BinaryOpType bin_op_type;
-    Expression *expr;
-    Program *program;
+    UnaryOpType    una_op_type;
+    BinaryOpType   bin_op_type;
+    Expression    *expr;
+    Program       *program;
     StatementList *stmt_list;
-    Statement *stmt;
-    Block *block;
+    Statement     *stmt;
+    Block         *block;
 
     int32_t int_;
-    char *str_;
+    char   *str_;
 
 #line 107 "src/gen/po.tab.h"
-
 };
 typedef union YYSTYPE YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
+#define YYSTYPE_IS_TRIVIAL 1
+#define YYSTYPE_IS_DECLARED 1
 #endif
-
 
 extern YYSTYPE yylval;
 
-
-int yyparse (IDProvider *idp, Program **program);
-
+int yyparse(IDProvider *idp, Program **program);
 
 #endif /* !YY_YY_SRC_GEN_PO_TAB_H_INCLUDED  */

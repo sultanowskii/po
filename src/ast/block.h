@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-#include "compiler/id_provider.h"
+#include "id_provider.h"
 
 // Forward declarations
 typedef struct StatementList StatementList;
