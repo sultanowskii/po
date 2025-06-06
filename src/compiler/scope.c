@@ -16,7 +16,7 @@
 #include "fmt.h"
 #include "string.h"
 
-VarInfo *var_info_create(int32_t offset, bool defined) {
+VarInfo *var_info_create(Offset offset, bool defined) {
     VarInfo *vi = malloc(sizeof(VarInfo));
     *vi = (VarInfo){
         .offset = offset,
@@ -63,7 +63,7 @@ void scope_destroy(Scope *scope) {
     free(scope);
 }
 
-void scope_add_variable(Scope *scope, const char *name, int32_t offset) {
+void scope_add_variable(Scope *scope, const char *name, Offset offset) {
     VarInfo *vi = var_info_create(offset, false);
     IGNORE_INT_TO_POINTER()
     map_set(scope->vars, strdup(name), vi);

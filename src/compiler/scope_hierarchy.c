@@ -17,7 +17,10 @@
 #include "container/vec.h"
 #include "fmt.h"
 #include "math.h"
+#include "result.h"
 #include "str.h"
+
+DEFINE_RESULT(Offset, offset, Offset)
 
 struct ScopeHierarchy {
     Map *scopes;
@@ -25,10 +28,13 @@ struct ScopeHierarchy {
     const Program *prog;
 };
 
-static int32_t traverse_block(Map *scopes, Block *block, int32_t base_offset, uint32_t parent_id);
+static OffsetResult traverse_block(Map *scopes, Block *block, Offset base_offset, uint32_t parent_id);
 
-static inline void validate_identifier(Map *scopes, Identifier *ident, uint32_t current_scope_id) {
-    printf("validate_identifier(%s, %" PRIu32 ")\n", ident->name, current_scope_id);
+// validate_identifier validates that the variable is defined before usage.
+//
+// - Returns error message if something isn't right.
+// - Returns NULL otherwise.
+static inline char *validate_identifier(Map *scopes, Identifier *ident, uint32_t current_scope_id) {
     const char *var_name = ident->name;
 
     uint32_t scope_id = current_scope_id;
@@ -43,49 +49,59 @@ static inline void validate_identifier(Map *scopes, Identifier *ident, uint32_t 
 
     if (scope_id == ID_PROVIDER_INVALID_ID) {
         // TODO: error: variable undefined
-        return;
+        return msprintf("variable undefined: %s", var_name);
     }
+
+    return NULL;
 }
 
-static inline void validate_expression(Map *scopes, Expression *expr, uint32_t current_scope_id) {
-    printf("validate_expression(some-expr, %" PRIu32 ")\n", current_scope_id);
+// validate_expression validates expression.
+//
+// - Returns error message if something isn't right.
+// - Returns NULL otherwise.
+static inline char *validate_expression(Map *scopes, Expression *expr, uint32_t current_scope_id) {
+    char *err = NULL;
     switch (expr->type) {
     case EXPRESSION_UNARY_OP:
-        validate_expression(scopes, expr->una_op->expr, current_scope_id);
+        err = validate_expression(scopes, expr->una_op->expr, current_scope_id);
+
         break;
     case EXPRESSION_BINARY_OP:
-        validate_expression(scopes, expr->bin_op->left, current_scope_id);
-        validate_expression(scopes, expr->bin_op->right, current_scope_id);
-        break;
-    case EXPRESSION_LITERAL:
+        err = validate_expression(scopes, expr->bin_op->left, current_scope_id);
+        if (err != NULL) {
+            break;
+        }
+        err = validate_expression(scopes, expr->bin_op->right, current_scope_id);
         break;
     case EXPRESSION_IDENTIFIER:
-        validate_identifier(scopes, expr->ident, current_scope_id);
+        err = validate_identifier(scopes, expr->ident, current_scope_id);
         break;
     }
+    return err;
 }
 
 // calculate_required_stack_size_of_this_scope calculates required stack size for variables defined in given scope.
-static inline int32_t calculate_required_stack_size_of_this_scope(
+static inline OffsetResult calculate_required_stack_size_of_this_scope(
     Map           *scopes,
     StatementList *statement_list,
     uint32_t       scope_id
 ) {
-    printf("calculate_required_stack_size_of_this_scope(%" PRIu32 ")\n", scope_id);
     StatementListNode *node = statement_list->head;
     IGNORE_INT_TO_POINTER()
     Scope *scope = map_get_(scopes, scope_id);
 
-    int32_t current_offset = 0;
+    Offset current_offset = 0;
     while (node != NULL) {
         switch (node->stmt->type) {
         case STATEMENT_NEW_VARIABLE:
-            validate_expression(scopes, node->stmt->new_variable.expr, scope_id);
+            char *maybe_error = validate_expression(scopes, node->stmt->new_variable.expr, scope_id);
+            if (maybe_error != NULL) {
+                return offset_result_err(maybe_error);
+            }
 
             const char *var_name = node->stmt->new_variable.ident->name;
             if (scope_get_variable(scope, var_name) != NULL) {
-                // TODO: error: variable is already declared in this scope
-                return -100500;
+                return offset_result_err(msprintf("variable is already declared in this scope: %s", var_name));
             }
             scope_add_variable(scope, var_name, current_offset);
             current_offset += 1; // TODO: type size
@@ -94,61 +110,91 @@ static inline int32_t calculate_required_stack_size_of_this_scope(
         node = node->next;
     }
 
-    return current_offset;
+    return offset_result_ok(current_offset);
 }
 
 // calculate_required_stack_size_of_nested_scopes calculates
 // minimal required stack size for variables defined in nested scopes.
-static inline int32_t calculate_required_stack_size_of_nested_scopes(
+static inline OffsetResult calculate_required_stack_size_of_nested_scopes(
     Map           *scopes,
     StatementList *statement_list,
     uint32_t       scope_id,
-    int32_t        start_offset
+    Offset         start_offset
 ) {
-    printf("calculate_required_stack_size_of_nested_scopes(%" PRIu32 ")\n", scope_id);
+    char *err = NULL;
+
     StatementListNode *node = statement_list->head;
-    int32_t            max_stack_size_of_nested_scopes = 0;
-    int32_t            nested_scope_size = 0;
+    Offset             max_stack_size_of_nested_scopes = 0;
+    OffsetResult       nested_scope_size_res;
     while (node != NULL) {
         switch (node->stmt->type) {
         case STATEMENT_ASSIGN:
-            validate_identifier(scopes, node->stmt->assign.ident, scope_id);
+            err = validate_identifier(scopes, node->stmt->assign.ident, scope_id);
+            if (err != NULL) {
+                return offset_result_err(err);
+            }
             break;
         case STATEMENT_IF:
-            validate_expression(scopes, node->stmt->if_.cond, scope_id);
+            err = validate_expression(scopes, node->stmt->if_.cond, scope_id);
+            if (err != NULL) {
+                return offset_result_err(err);
+            }
 
-            nested_scope_size = traverse_block(scopes, node->stmt->if_.if_block, start_offset, scope_id);
-            max_stack_size_of_nested_scopes = MAX(max_stack_size_of_nested_scopes, nested_scope_size);
+            nested_scope_size_res = traverse_block(scopes, node->stmt->if_.if_block, start_offset, scope_id);
+            if (offset_result_is_err(nested_scope_size_res)) {
+                return nested_scope_size_res;
+            }
+            max_stack_size_of_nested_scopes = MAX(max_stack_size_of_nested_scopes, offset_result_get_val(nested_scope_size_res));
             break;
         case STATEMENT_IF_ELSE:
-            validate_expression(scopes, node->stmt->if_else.cond, scope_id);
+            err = validate_expression(scopes, node->stmt->if_else.cond, scope_id);
+            if (err != NULL) {
+                return offset_result_err(err);
+            }
 
-            nested_scope_size = traverse_block(scopes, node->stmt->if_else.if_block, start_offset, scope_id);
-            max_stack_size_of_nested_scopes = MAX(max_stack_size_of_nested_scopes, nested_scope_size);
+            nested_scope_size_res = traverse_block(scopes, node->stmt->if_else.if_block, start_offset, scope_id);
+            if (offset_result_is_err(nested_scope_size_res)) {
+                return nested_scope_size_res;
+            }
+            max_stack_size_of_nested_scopes = MAX(max_stack_size_of_nested_scopes, offset_result_get_val(nested_scope_size_res));
 
-            nested_scope_size = traverse_block(scopes, node->stmt->if_else.else_block, start_offset, scope_id);
-            max_stack_size_of_nested_scopes = MAX(max_stack_size_of_nested_scopes, nested_scope_size);
+            nested_scope_size_res = traverse_block(scopes, node->stmt->if_else.else_block, start_offset, scope_id);
+            if (offset_result_is_err(nested_scope_size_res)) {
+                return nested_scope_size_res;
+            }
+            max_stack_size_of_nested_scopes = MAX(max_stack_size_of_nested_scopes, offset_result_get_val(nested_scope_size_res));
             break;
         case STATEMENT_WHILE:
-            validate_expression(scopes, node->stmt->while_.cond, scope_id);
+            err = validate_expression(scopes, node->stmt->while_.cond, scope_id);
+            if (err != NULL) {
+                return offset_result_err(err);
+            }
 
-            nested_scope_size = traverse_block(scopes, node->stmt->while_.block, start_offset, scope_id);
-            max_stack_size_of_nested_scopes = MAX(max_stack_size_of_nested_scopes, nested_scope_size);
+            nested_scope_size_res = traverse_block(scopes, node->stmt->while_.block, start_offset, scope_id);
+            if (offset_result_is_err(nested_scope_size_res)) {
+                return nested_scope_size_res;
+            }
+            max_stack_size_of_nested_scopes = MAX(max_stack_size_of_nested_scopes, offset_result_get_val(nested_scope_size_res));
             break;
         case STATEMENT_BLOCK:
-            nested_scope_size = traverse_block(scopes, node->stmt->block.block, start_offset, scope_id);
-            max_stack_size_of_nested_scopes = MAX(max_stack_size_of_nested_scopes, nested_scope_size);
+            nested_scope_size_res = traverse_block(scopes, node->stmt->block.block, start_offset, scope_id);
+            if (offset_result_is_err(nested_scope_size_res)) {
+                return nested_scope_size_res;
+            }
+            max_stack_size_of_nested_scopes = MAX(max_stack_size_of_nested_scopes, offset_result_get_val(nested_scope_size_res));
             break;
         }
 
         node = node->next;
     }
+
+    return offset_result_ok(max_stack_size_of_nested_scopes);
 }
 
 // traverse_block traverses block and builds scopes: its own and of all children blocks.
 //
 // Returns minimal required size on stack.
-static inline int32_t traverse_block(Map *scopes, Block *block, int32_t base_offset, uint32_t parent_id) {
+static inline OffsetResult traverse_block(Map *scopes, Block *block, int32_t base_offset, uint32_t parent_id) {
     Scope *scope = scope_create(block->id, base_offset);
     map_set_(scopes, block->id, scope);
     scope->parent_id = parent_id;
@@ -158,22 +204,29 @@ static inline int32_t traverse_block(Map *scopes, Block *block, int32_t base_off
         scope_add_scope(parent_scope, block->id);
     }
 
-    printf("traverse_block(%" PRIu32 ")\n", block->id);
+    OffsetResult current_size_res = calculate_required_stack_size_of_this_scope(scopes, block->statements, block->id);
+    if (offset_result_is_err(current_size_res)) {
+        return current_size_res;
+    }
+    Offset current_size = offset_result_get_val(current_size_res);
 
-    int32_t current_size = calculate_required_stack_size_of_this_scope(scopes, block->statements, block->id);
-    int32_t nested_size = calculate_required_stack_size_of_nested_scopes(
+    OffsetResult nested_size_res = calculate_required_stack_size_of_nested_scopes(
         scopes,
         block->statements,
         block->id,
         current_size
     );
+    if (offset_result_is_err(nested_size_res)) {
+        return nested_size_res;
+    }
+    Offset nested_size = offset_result_get_val(nested_size_res);
 
     scope->required_size = current_size + nested_size;
 
-    return current_size + nested_size;
+    return offset_result_ok(current_size + nested_size);
 }
 
-ScopeHierarchy *scope_hierarchy_build(const Program *prog) {
+ScopeHierarchyBuildResult scope_hierarchy_build(const Program *prog) {
     Map *scopes = map_create(
         hashf_uint32,
         (PrintFunction)uint32_print,
@@ -184,13 +237,22 @@ ScopeHierarchy *scope_hierarchy_build(const Program *prog) {
     Scope *scope = scope_create(prog->id, 0);
     map_set_(scopes, prog->id, scope);
 
-    int32_t current_size = calculate_required_stack_size_of_this_scope(scopes, prog->statements, prog->id);
-    int32_t nested_size = calculate_required_stack_size_of_nested_scopes(
+    OffsetResult current_size_res = calculate_required_stack_size_of_this_scope(scopes, prog->statements, prog->id);
+    if (offset_result_is_err(current_size_res)) {
+        return scope_hierarchy_build_result_err(offset_result_get_err(current_size_res));
+    }
+    Offset current_size = offset_result_get_val(current_size_res);
+
+    OffsetResult nested_size_res = calculate_required_stack_size_of_nested_scopes(
         scopes,
         prog->statements,
         prog->id,
         current_size
     );
+    if (offset_result_is_err(nested_size_res)) {
+        return scope_hierarchy_build_result_err(offset_result_get_err(nested_size_res));
+    }
+    Offset nested_size = offset_result_get_val(nested_size_res);
 
     scope->required_size = current_size + nested_size;
 
@@ -199,7 +261,8 @@ ScopeHierarchy *scope_hierarchy_build(const Program *prog) {
         .prog = prog,
         .scopes = scopes,
     };
-    return sh;
+
+    return scope_hierarchy_build_result_ok(sh);
 }
 
 static inline void _scope_hierarchy_print(const ScopeHierarchy *sh, size_t padding, uint32_t scope_id) {
@@ -212,7 +275,6 @@ static inline void _scope_hierarchy_print(const ScopeHierarchy *sh, size_t paddi
     for (size_t i = 0; i < vec_length(scope->scopes); i++) {
         void *maybe_inner_scope_id = vec_get_at(scope->scopes, i);
         if (maybe_inner_scope_id == NULL) {
-            puts("null :(");
             continue;
         }
         IGNORE_POINTER_TO_INT()

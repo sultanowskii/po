@@ -1,3 +1,4 @@
+#include <malloc.h>
 #include <stdio.h>
 
 #include "compiler/ast/ast.h"
@@ -13,7 +14,14 @@ int main(int argc, char **argv) {
     yyparse(idp, &prog);
     puts("done!");
 
-    ScopeHierarchy *sh = scope_hierarchy_build(prog);
+    ScopeHierarchyBuildResult res = scope_hierarchy_build(prog);
+    if (scope_hierarchy_build_result_is_err(res)) {
+        char *err_msg = scope_hierarchy_build_result_get_err(res);
+        puts(err_msg);
+        free(err_msg);
+        return 1;
+    }
+    ScopeHierarchy *sh = scope_hierarchy_build_result_get_val(res);
 
     program_print(prog, 0);
 
