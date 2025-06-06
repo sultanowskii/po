@@ -10,6 +10,7 @@
 #include "interp/scope.h"
 #include "std/result.h"
 #include "std/str.h"
+#include <stdio.h>
 
 DEFINE_RESULT(Value, value, Value *)
 
@@ -20,7 +21,7 @@ Scope *find_variable_scope(const Stack *scopes, const char *name) {
     StackNode *node = scopes->head;
     while (node != NULL) {
         Scope *scope = node->val;
-        if (scope_get_var(scope, name) != NULL) {
+        if (scope_has_var(scope, name)) {
             return scope;
         }
         node = node->next;
@@ -74,7 +75,7 @@ static inline bool equal(Value *a, Value *b) {
     case TYPE_INT:
         return a->int_ == b->int_;
     case TYPE_STR:
-        return strcmp(a->str, b->str);
+        return strcmp(a->str, b->str) == 0;
     }
     return false;
 }
@@ -196,101 +197,145 @@ ValueResult interpret_expression(Stack *scopes, Expression *expr) {
     return value_result_err(msprintf("unexpected expression type"));
 }
 
-char *interpret_statement(Stack *scopes, Statement *stmt) {
-    Scope      *scope = stack_top(scopes);
-    ValueResult res;
-    Value      *value = NULL;
-    char       *err = NULL;
+char *interpret_statement_new_variable(Stack *scopes, Statement *stmt) {
+    Scope *scope = stack_top(scopes);
+    if (scope_has_var(scope, stmt->new_variable.ident->name)) {
+        return msprintf("variable is already defined in the scope: %s", stmt->new_variable.ident->name);
+    }
 
-    switch (stmt->type) {
-    case STATEMENT_NEW_VARIABLE:
-        if (scope_get_var(scope, stmt->new_variable.ident->name) != NULL) {
-            return msprintf("variable is already defined in the scope: %s", stmt->new_variable.ident->name);
+    ValueResult res = interpret_expression(scopes, stmt->new_variable.expr);
+    if (value_result_is_err(res)) {
+        return value_result_get_err(res);
+    }
+
+    Value *value = value_result_get_val(res);
+    scope_add_var(scope, stmt->new_variable.ident->name, value);
+    return NULL;
+}
+
+char *interpret_statement_assign(Stack *scopes, Statement *stmt) {
+    Scope *target_scope = find_variable_scope(scopes, stmt->assign.ident->name);
+    if (target_scope == NULL) {
+        return msprintf("variable undefined: %s", stmt->assign.ident->name);
+    }
+
+    ValueResult res = interpret_expression(scopes, stmt->new_variable.expr);
+    if (value_result_is_err(res)) {
+        return value_result_get_err(res);
+    }
+
+    Value *value = value_result_get_val(res);
+    return scope_update_var(target_scope, stmt->assign.ident->name, value);
+}
+
+char *interpret_statement_if(Stack *scopes, Statement *stmt) {
+    ValueResult res = interpret_expression(scopes, stmt->if_.cond);
+    if (value_result_is_err(res)) {
+        return value_result_get_err(res);
+    }
+
+    Value *value = value_result_get_val(res);
+    if (!value->int_) {
+        return NULL;
+    }
+
+    return interpret_block(scopes, stmt->if_.if_block);
+}
+
+char *interpret_statement_if_else(Stack *scopes, Statement *stmt) {
+    ValueResult res = interpret_expression(scopes, stmt->if_else.cond);
+    if (value_result_is_err(res)) {
+        return value_result_get_err(res);
+    }
+
+    Value *value = value_result_get_val(res);
+    if (value->int_) {
+        return interpret_block(scopes, stmt->if_else.if_block);
+    } else {
+        return interpret_block(scopes, stmt->if_else.else_block);
+    }
+}
+
+char *interpret_statement_while(Stack *scopes, Statement *stmt) {
+    char *err = NULL;
+
+    do {
+        ValueResult cond_res = interpret_expression(scopes, stmt->while_.cond);
+        if (value_result_is_err(cond_res)) {
+            return value_result_get_err(cond_res);
+        }
+        Value *cond_value = value_result_get_val(cond_res);
+        if (!cond_value->int_) {
+            break;
         }
 
-        res = interpret_expression(scopes, stmt->new_variable.expr);
-        if (value_result_is_err(res)) {
-            return value_result_get_err(res);
-        }
-        value = value_result_get_val(res);
-        scope_add_var(scope, stmt->new_variable.ident->name, value);
-        break;
-    case STATEMENT_ASSIGN:
-        Scope *target_scope = find_variable_scope(scopes, stmt->assign.ident->name);
-        if (target_scope == NULL) {
-            return msprintf("variable undefined: %s", stmt->assign.ident->name);
-        }
-
-        res = interpret_expression(scopes, stmt->new_variable.expr);
-        if (value_result_is_err(res)) {
-            return value_result_get_err(res);
-        }
-        value = value_result_get_val(res);
-
-        err = scope_update_var(target_scope, stmt->assign.ident->name, value);
+        err = interpret_block(scopes, stmt->while_.block);
         if (err != NULL) {
             return err;
         }
-        break;
-    case STATEMENT_IF:
-        res = interpret_expression(scopes, stmt->if_.cond);
-        if (value_result_is_err(res)) {
-            return value_result_get_err(res);
-        }
-        value = value_result_get_val(res);
+    } while (true);
 
-        if (value->int_) {
-            err = interpret_block(scopes, stmt->if_.if_block);
-            if (err != NULL) {
-                return err;
-            }
-        }
-        break;
-    case STATEMENT_IF_ELSE:
-        res = interpret_expression(scopes, stmt->if_else.cond);
-        if (value_result_is_err(res)) {
-            return value_result_get_err(res);
-        }
-        value = value_result_get_val(res);
+    return NULL;
+}
 
-        if (value->int_) {
-            err = interpret_block(scopes, stmt->if_else.if_block);
-            if (err != NULL) {
-                return err;
-            }
-        } else {
-            err = interpret_block(scopes, stmt->if_else.else_block);
-            if (err != NULL) {
-                return err;
-            }
+char *interpret_statement_print(Stack *scopes, Statement *stmt) {
+    ValueResult val_res = interpret_expression(scopes, stmt->print.expr);
+    if (value_result_is_err(val_res)) {
+        return value_result_get_err(val_res);
+    }
+
+    Value *value = value_result_get_val(val_res);
+    switch (stmt->print.type) {
+    case PRINT_CHAR:
+        switch (value->type) {
+        case TYPE_INT:
+            printf("%c", value->int_ & 0xFF);
+            break;
+        case TYPE_STR:
+            printf("%c", value->str[0]);
+            break;
         }
         break;
-    case STATEMENT_WHILE:
-        bool ok = true;
-        do {
-            ValueResult cond_res = interpret_expression(scopes, stmt->while_.cond);
-            if (value_result_is_err(res)) {
-                return value_result_get_err(res);
-            }
-            Value *cond_value = value_result_get_val(res);
-            if (!cond_value->int_) {
-                break;
-            }
-
-            err = interpret_block(scopes, stmt->while_.block);
-            if (err != NULL) {
-                return err;
-            }
-        } while (ok);
+    case PRINT_INT:
+        switch (value->type) {
+        case TYPE_INT:
+            printf("%" PRId32 "\n", value->int_);
+            break;
+        default:
+            return msprintf("printi: unexpected arg type: '%s'", VALUE_TYPE_STR[value->type]);
+        }
         break;
-    case STATEMENT_BLOCK:
-        err = interpret_block(scopes, stmt->block.block);
-        if (err != NULL) {
-            return err;
+    case PRINT_STR:
+        switch (value->type) {
+        case TYPE_INT:
+            return msprintf("prints: unexpected arg type: '%s'", VALUE_TYPE_STR[value->type]);
+        default:
+            puts(value->str);
+            break;
         }
         break;
     }
 
+    return NULL;
+}
+
+char *interpret_statement(Stack *scopes, Statement *stmt) {
+    switch (stmt->type) {
+    case STATEMENT_NEW_VARIABLE:
+        return interpret_statement_new_variable(scopes, stmt);
+    case STATEMENT_ASSIGN:
+        return interpret_statement_assign(scopes, stmt);
+    case STATEMENT_IF:
+        return interpret_statement_if(scopes, stmt);
+    case STATEMENT_IF_ELSE:
+        return interpret_statement_if_else(scopes, stmt);
+    case STATEMENT_WHILE:
+        return interpret_statement_while(scopes, stmt);
+    case STATEMENT_PRINT:
+        return interpret_statement_print(scopes, stmt);
+    case STATEMENT_BLOCK:
+        return interpret_block(scopes, stmt->block.block);
+    }
     return NULL;
 }
 

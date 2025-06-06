@@ -25,7 +25,16 @@ Value *value_create_str(const char *val) {
     return value;
 }
 
-void *value_destroy(Value *value) {
+Value *value_copy(const Value *orig) {
+    switch (orig->type) {
+    case TYPE_INT:
+        return value_create_int(orig->int_);
+    case TYPE_STR:
+        return value_create_str(orig->str);
+    }
+}
+
+void value_destroy(Value *value) {
     switch (value->type) {
     case TYPE_STR:
         free(value->str);

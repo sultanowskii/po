@@ -19,6 +19,3 @@ while (a != 0) {
         } else   {  misses = misses + 1
         b = b + tmp
           }}
-
-
-

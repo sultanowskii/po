@@ -41,7 +41,7 @@ $(TARGET_INTERPRETER): $(OBJS) $(INTERPRETER_OBJS)
 	$(CC) -I$(SRC_DIR) -lfl -o $(TARGET_INTERPRETER) $^
 
 %.o: %.c
-	$(CC) -I$(SRC_DIR) -lfl -c -o $@ $<
+	$(CC) -I$(SRC_DIR) -g -lfl -c -o $@ $<
 
 $(PARSER_GEN_SRCS): $(PARSER_DEFINITION)
 	bison -Wcounterexamples --output=$(PARSER_GEN_SRC) --header=$(PARSER_GEN_HDR) $<

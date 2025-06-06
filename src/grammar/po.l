@@ -11,6 +11,9 @@
 "if"    { return IF; }
 "else"  { return ELSE; }
 "while" { return WHILE; }
+"prints" { return PRINTS; }
+"printi" { return PRINTI; }
+"printc" { return PRINTC; }
 
 "("  { return L_PAREN; }
 ")"  { return R_PAREN; }
@@ -33,7 +36,12 @@
 
 "!" { yylval.una_op_type = UNARY_OP_NOT; return OP_NOT; }
 
-[+-]?[1-9][0-9]*|0 { yylval.int_ = atoi(yytext); return LIT_INT; }
+[+-]?[1-9][0-9]*|0   { yylval.int_ = atoi(yytext); return LIT_INT; }
+\"([^\"\n])*\"       {
+                        yylval.str_ = strdup(yytext + 1);
+                        yylval.str_[strlen(yylval.str_) - 1] = '\0';
+                        return LIT_STR;
+                     }
 
 [a-zA-Z_][a-zA-Z0-9_]* { yylval.str_ = strdup(yytext); return IDENTIFIER; }
 

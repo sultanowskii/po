@@ -74,6 +74,42 @@ Statement *statement_create_while(Expression *cond, Block *block) {
     return stmt;
 }
 
+Statement *statement_create_print_char(Expression *expr) {
+    Statement *stmt = statement_create_empty();
+    *stmt = (Statement){
+        .type = STATEMENT_PRINT,
+        .print = {
+            .type = PRINT_CHAR,
+            .expr = expr,
+        },
+    };
+    return stmt;
+}
+
+Statement *statement_create_print_int(Expression *expr) {
+    Statement *stmt = statement_create_empty();
+    *stmt = (Statement){
+        .type = STATEMENT_PRINT,
+        .print = {
+            .type = PRINT_INT,
+            .expr = expr,
+        },
+    };
+    return stmt;
+}
+
+Statement *statement_create_print_str(Expression *expr) {
+    Statement *stmt = statement_create_empty();
+    *stmt = (Statement){
+        .type = STATEMENT_PRINT,
+        .print = {
+            .type = PRINT_STR,
+            .expr = expr,
+        },
+    };
+    return stmt;
+}
+
 Statement *statement_create_block(Block *block) {
     Statement *stmt = statement_create_empty();
     *stmt = (Statement){
@@ -108,6 +144,9 @@ void statement_destroy(Statement *stmt) {
         expression_destroy(stmt->while_.cond);
         block_destroy(stmt->while_.block);
         break;
+    case STATEMENT_PRINT:
+        expression_destroy(stmt->print.expr);
+        break;
     case STATEMENT_BLOCK:
         block_destroy(stmt->block.block);
         break;
@@ -125,6 +164,15 @@ static inline char *statement_get_type_str(Statement *statement) {
         return "if";
     case STATEMENT_WHILE:
         return "while";
+    case STATEMENT_PRINT:
+        switch (statement->print.type) {
+        case PRINT_CHAR:
+            return "printc";
+        case PRINT_INT:
+            return "printi";
+        case PRINT_STR:
+            return "prints";
+        }
     case STATEMENT_BLOCK:
         return "block";
     };
@@ -178,6 +226,11 @@ void statement_print(Statement *statement, size_t padding) {
         print_padding(padding + 1);
         puts("block:");
         block_print(statement->while_.block, padding + 2);
+        break;
+    case STATEMENT_PRINT:
+        print_padding(padding + 1);
+        puts("expr:");
+        expression_print(statement->print.expr, padding + 2);
         break;
     case STATEMENT_BLOCK:
         print_padding(padding + 1);

@@ -47,16 +47,14 @@ void stack_push(Stack *stack, void *elem) {
     stack->head = node;
 }
 
-void *stack_pop(Stack *stack) {
+void stack_pop(Stack *stack) {
     if (stack->head == NULL) {
-        return NULL;
+        return;
     }
 
-    void      *val = stack->head->val;
     StackNode *next = stack->head->next;
-    free(stack->head);
+    stack_node_destroy(stack, stack->head);
     stack->head = next;
-    return val;
 }
 
 void *stack_top(const Stack *stack) {

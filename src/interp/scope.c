@@ -27,8 +27,20 @@ void scope_destroy(Scope *scope) {
     free(scope);
 }
 
-Value *scope_get_var(const Scope *scope, const char *name) {
+Value *_scope_get_var(const Scope *scope, const char *name) {
     return map_get(scope->vars, name);
+}
+
+Value *scope_get_var(const Scope *scope, const char *name) {
+    Value *value = _scope_get_var(scope, name);
+    if (value == NULL) {
+        return value;
+    }
+    return value_copy(value);
+}
+
+bool scope_has_var(const Scope *scope, const char *name) {
+    return _scope_get_var(scope, name) != NULL;
 }
 
 void scope_add_var(Scope *scope, const char *name, Value *value) {

@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 19 "src/grammar/po.y"
+#line 16 "src/grammar/po.y"
 
     #include "ast/ast.h"
 
@@ -63,25 +63,29 @@ extern int yydebug;
     IF = 258,                      /* IF  */
     ELSE = 259,                    /* ELSE  */
     WHILE = 260,                   /* WHILE  */
-    L_PAREN = 261,                 /* L_PAREN  */
-    R_PAREN = 262,                 /* R_PAREN  */
-    L_BRACE = 263,                 /* L_BRACE  */
-    R_BRACE = 264,                 /* R_BRACE  */
-    SEMICOLON = 265,               /* SEMICOLON  */
-    OP_WALRUS = 266,               /* OP_WALRUS  */
-    OP_ASSIGN = 267,               /* OP_ASSIGN  */
-    OP_PLUS = 268,                 /* OP_PLUS  */
-    OP_MINUS = 269,                /* OP_MINUS  */
-    OP_MUL = 270,                  /* OP_MUL  */
-    OP_DIV = 271,                  /* OP_DIV  */
-    OP_AND = 272,                  /* OP_AND  */
-    OP_OR = 273,                   /* OP_OR  */
-    OP_EQUALS = 274,               /* OP_EQUALS  */
-    OP_NOT_EQUALS = 275,           /* OP_NOT_EQUALS  */
-    OP_NOT = 276,                  /* OP_NOT  */
-    LIT_INT = 277,                 /* LIT_INT  */
-    IDENTIFIER = 278,              /* IDENTIFIER  */
-    EOL = 279                      /* EOL  */
+    PRINTS = 261,                  /* PRINTS  */
+    PRINTI = 262,                  /* PRINTI  */
+    PRINTC = 263,                  /* PRINTC  */
+    L_PAREN = 264,                 /* L_PAREN  */
+    R_PAREN = 265,                 /* R_PAREN  */
+    L_BRACE = 266,                 /* L_BRACE  */
+    R_BRACE = 267,                 /* R_BRACE  */
+    SEMICOLON = 268,               /* SEMICOLON  */
+    OP_WALRUS = 269,               /* OP_WALRUS  */
+    OP_ASSIGN = 270,               /* OP_ASSIGN  */
+    OP_PLUS = 271,                 /* OP_PLUS  */
+    OP_MINUS = 272,                /* OP_MINUS  */
+    OP_MUL = 273,                  /* OP_MUL  */
+    OP_DIV = 274,                  /* OP_DIV  */
+    OP_AND = 275,                  /* OP_AND  */
+    OP_OR = 276,                   /* OP_OR  */
+    OP_EQUALS = 277,               /* OP_EQUALS  */
+    OP_NOT_EQUALS = 278,           /* OP_NOT_EQUALS  */
+    OP_NOT = 279,                  /* OP_NOT  */
+    LIT_INT = 280,                 /* LIT_INT  */
+    LIT_STR = 281,                 /* LIT_STR  */
+    IDENTIFIER = 282,              /* IDENTIFIER  */
+    EOL = 283                      /* EOL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -90,7 +94,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 30 "src/grammar/po.y"
+#line 27 "src/grammar/po.y"
 
     UnaryOpType una_op_type;
     BinaryOpType bin_op_type;
@@ -103,7 +107,7 @@ union YYSTYPE
     int32_t int_;
     char *str_;
 
-#line 107 "src/gen/po.tab.h"
+#line 111 "src/gen/po.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

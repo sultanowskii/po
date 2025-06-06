@@ -9,9 +9,6 @@
     extern FILE *yyin;
 
     void yyerror(IDProvider *idp, Program **prog, const char *s);
-
-    int yydebug = 1;
-    #define YYDEBUG 1
 %}
 
 // Required includes for all generated files
@@ -44,6 +41,9 @@
 %token IF
 %token ELSE
 %token WHILE
+%token PRINTS
+%token PRINTI
+%token PRINTC
 
 %token L_PAREN
 %token R_PAREN
@@ -66,6 +66,7 @@
 %token <una_op_type> OP_NOT
 
 %token <int_> LIT_INT
+%token <str_> LIT_STR
 
 %token <str_> IDENTIFIER
 
@@ -73,7 +74,7 @@
 
 // Types of non-terminal tokens.
 %type <expr> expression expression_logic_term expression_compared_term expression_term expression_factor
-%type <stmt> statement statement_new_variable statement_assign statement_cond statement_while
+%type <stmt> statement statement_new_variable statement_assign statement_cond statement_while statement_print
 %type <stmt_list> statement_list non_empty_statement_list
 %type <block> block
 
@@ -110,6 +111,7 @@ statement
     | statement_assign
     | statement_cond
     | statement_while
+    | statement_print
     | block                  { $$ = statement_create_block($1); }
     ;
 
@@ -128,6 +130,12 @@ statement_cond
 
 statement_while
     : WHILE L_PAREN expression R_PAREN block { $$ = statement_create_while($3, $5); }
+    ;
+
+statement_print
+    : PRINTC L_PAREN expression R_PAREN { $$ = statement_create_print_char($3); }
+    | PRINTI L_PAREN expression R_PAREN { $$ = statement_create_print_int($3); }
+    | PRINTS L_PAREN expression R_PAREN { $$ = statement_create_print_str($3); }
     ;
 
 expression
@@ -156,6 +164,7 @@ expression_term
 
 expression_factor
     : LIT_INT                    { $$ = expression_create_literal(literal_create_int($1)); }
+    | LIT_STR                    { $$ = expression_create_literal(literal_create_str($1)); }
     | IDENTIFIER                 { $$ = expression_create_identifier(identifier_create($1)); }
     | OP_NOT expression_factor   { $$ = expression_create_unary_op(unary_op_create($1, $2)); }
     | L_PAREN expression R_PAREN { $$ = $2; }
