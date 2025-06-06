@@ -309,8 +309,8 @@ char *interpret_statement_print(Stack *scopes, Statement *stmt) {
         switch (value->type) {
         case TYPE_INT:
             return msprintf("prints: unexpected arg type: '%s'", VALUE_TYPE_STR[value->type]);
-        default:
-            puts(value->str);
+        case TYPE_STR:
+            printf("%s\n", value->str);
             break;
         }
         break;

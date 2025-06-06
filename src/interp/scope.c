@@ -56,7 +56,7 @@ char *scope_update_var(Scope *scope, char *name, Value *value) {
 
     if (current_value->type != value->type) {
         return msprintf(
-            "type mismatch while trying to update variable: current: %s, new: %s",
+            "type mismatch while trying to update variable '%s': current: %s, new: %s",
             name,
             VALUE_TYPE_STR[current_value->type],
             VALUE_TYPE_STR[value->type]

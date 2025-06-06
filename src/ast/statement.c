@@ -235,7 +235,7 @@ void statement_print(Statement *statement, size_t padding) {
     case STATEMENT_BLOCK:
         print_padding(padding + 1);
         puts("block:");
-        block_print(statement->while_.block, padding + 2);
+        block_print(statement->block.block, padding + 2);
         break;
     };
 }

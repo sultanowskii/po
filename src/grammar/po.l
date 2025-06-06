@@ -46,4 +46,6 @@
 [a-zA-Z_][a-zA-Z0-9_]* { yylval.str_ = strdup(yytext); return IDENTIFIER; }
 
 [\n\r]+ { return EOL; }
+
+[ \t]+ { /* Ignore whitespace */ }
 %%

@@ -1,0 +1,10 @@
+q := 1
+prints("Outside"); printi(q)
+
+{
+    q = q + 10
+    q := 2
+    prints("Inside"); printi(q)
+}
+
+prints("Outside again"); printi(q)

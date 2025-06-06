@@ -51,7 +51,7 @@ void literal_print(Literal *literal, size_t padding) {
         printf("%lld\n", literal->int_);
         break;
     case LITERAL_STR:
-        puts(literal->str);
+        printf("'%s'\n", literal->str);
         break;
     }
 }

@@ -1,0 +1,2 @@
+printc(65); printc("B"); prints("CDE")
+printi(123456)

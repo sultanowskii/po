@@ -1,0 +1,4 @@
+variable := 2 + 2 * 2
+variable = "asd"
+
+prints(variable)
